@@ -43,6 +43,7 @@ hubs:
   - host: 192.168.20.201
     port: 1487
     type: 'dooya'
+    async: false
     bridge_address: '123'
     tcp_async: false
     tcp_timeout: 1000
@@ -50,24 +51,24 @@ hubs:
     blinds:
       - name: 'Bed 1 Roller Blind'
         type: 'blind'
-        motor_address: '001'
+        motor_address: 'D001'
       - name: 'Bed 1 Curtain'
         type: 'curtain'
-        motor_address: '002'
+        motor_address: 'D002'
   - host: 192.168.20.202
     port: 1487
     type: 'acmeda'
     async: true
     tcp_timeout: 1000
     tcp_retry: 5
-    bridge_address: '123'
+    bridge_address: '' // Leave blank for Acmeda
     blinds:
       - name: 'Kitchen Roller Blind'
         type: 'blind'
-        motor_address: '003'
+        motor_address: 'L40'
       - name: 'Bed 4 Curtain'
         type: 'curtain'
-        motor_address: '004'
+        motor_address: '53T'
 ```
 
 **Where:**
