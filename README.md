@@ -43,7 +43,6 @@ hubs:
   - host: 192.168.20.201
     port: 1487
     type: 'dooya'
-    async: false
     bridge_address: '123'
     tcp_async: false
     tcp_timeout: 1000
@@ -58,8 +57,8 @@ hubs:
   - host: 192.168.20.202
     port: 1487
     type: 'acmeda'
-    async: true
-    tcp_timeout: 1000
+    tcp_async: true
+    tcp_timeout: 2000
     tcp_retry: 5
     bridge_address: '' // Leave blank for Acmeda
     blinds:
@@ -75,7 +74,7 @@ hubs:
 - `hub.host/port` is the host/port of your blind hub
 - `hub.type` is the brand of the blind hub. `acmeda` and `dooya` are supported.
 - `hub.bridge_address` is the address of the blind hub. You can get this by polling your motorised blind hub/API.
-- `hub.async`: if `true`, all TCP commands will be run at the same time. If `false`, commands will be queued up and ran in sequence.
+- `hub.tcp_async`: if `true`, all TCP commands will be run at the same time. If `false`, commands will be queued up and ran in sequence.
 - `hub.tcp_timeout`: how long to wait before a TCP command times out without getting a response from the hub.
 - `hub.tcp_retry`: how many times to retry before failing.
 - `blinds.name`: The name to be displayed in Home Assistant
