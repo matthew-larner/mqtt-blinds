@@ -71,12 +71,12 @@ hubs:
 ```
 
 **Where:**
+- `tcp.async`: if `true`, all TCP commands will be run at the same time. If `false`, commands will be queued up and ran in sequence.
+- `tcp.timeout`: how long to wait before a TCP command times out without getting a response from the hub.
+- `tcp.retry`: how many times to retry before failing.
 - `hub.host/port` is the host/port of your blind hub
 - `hub.type` is the brand of the blind hub. `acmeda` and `dooya` are supported.
 - `hub.bridge_address` is the address of the blind hub. You can get this by polling your motorised blind hub/API.
-- `hub.tcp_async`: if `true`, all TCP commands will be run at the same time. If `false`, commands will be queued up and ran in sequence.
-- `hub.tcp_timeout`: how long to wait before a TCP command times out without getting a response from the hub.
-- `hub.tcp_retry`: how many times to retry before failing.
 - `blinds.name`: The name to be displayed in Home Assistant
 - `blinds.type` is either: `blind` (a motorised roller blind), `curtain` (a motorised curtain or awning)
 - `blinds.motor_address`: The address of the motor. You can get this by polling your motorised blind hub/API
