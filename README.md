@@ -38,15 +38,18 @@ mqtt:
   topic_prefix: mqtt-blinds
   availability_topic: mqtt-blinds/available
 
+# Global TCP Config for Motorised Blind Hub Communication
+tcp:
+  async: false
+  timeout: 1000
+  retry: 5
+
 # Motorised Blind Hubs
 hubs:
   - host: 192.168.20.201
     port: 1487
     type: 'dooya'
     bridge_address: '123'
-    tcp_async: false
-    tcp_timeout: 1000
-    tcp_retry: 5
     blinds:
       - name: 'Bed 1 Roller Blind'
         type: 'blind'
@@ -57,9 +60,6 @@ hubs:
   - host: 192.168.20.202
     port: 1487
     type: 'acmeda'
-    tcp_async: true
-    tcp_timeout: 2000
-    tcp_retry: 5
     bridge_address: '' // Leave blank for Acmeda
     blinds:
       - name: 'Kitchen Roller Blind'
