@@ -1,6 +1,9 @@
 # MQTT Blinds
 A containerised app to control Acmeda/Dooya roller blinds via MQTT to be used with home automation like Home Assistant.
 
+## How it works
+This docker container communicates with motorised blinds via TCP commands. It supports 2-way communication (MQTT->TCP and TCP->MQTT). It will automatically create blinds/curtains in Home Assistant if you have [MQTT discovery enabled](https://www.home-assistant.io/docs/mqtt/discovery/). 
+
 ## Setup Steps
 1. Create a [MQTT server](https://hub.docker.com/_/eclipse-mosquitto)
 2. Setup config file `configuration.yml` in `/config` directory (example below)
@@ -72,14 +75,10 @@ hubs:
 **Where:**
 - `tcp.async`: if `true`, all TCP commands will be run at the same time. If `false`, commands will be queued up and ran in sequence.
 - `tcp.timeout`: how long (seconds) to wait before a TCP command times out without getting a response from the hub.
-- `tcp.retry`: how many times to retry before failing.
 - `hub.host/port` is the host/port of your blind hub
 - `hub.type` is the brand of the blind hub. `acmeda` and `dooya` are supported.
 - `hub.bridge_address` is the address of the blind hub. You can get this by polling your motorised blind hub/API.
 - `blinds.name`: The name to be displayed in Home Assistant
 - `blinds.type` is either: `blind` (a motorised roller blind), `curtain` (a motorised curtain or awning)
 - `blinds.motor_address`: The address of the motor. You can get this by polling your motorised blind hub/API
-
-## How it works
-This docker container communicates with motorised blinds via TCP commands. It supports 2-way communication (MQTT->TCP and TCP->MQTT). It will automatically create the following items in Home Assistant if you have [MQTT discovery enabled](https://www.home-assistant.io/docs/mqtt/discovery/). 
 
