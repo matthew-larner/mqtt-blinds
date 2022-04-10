@@ -41,8 +41,7 @@ mqtt:
 # Global TCP Config for Motorised Blind Hub Communication
 tcp:
   async: false
-  timeout: 10
-  retry: 5
+  timeout: 10 # seconds
 
 # Motorised Blind Hubs
 hubs:
@@ -60,7 +59,7 @@ hubs:
   - host: 192.168.20.202
     port: 1487
     type: 'acmeda'
-    bridge_address: '' // Leave blank for Acmeda
+    bridge_address: '' # Leave blank for Acmeda
     blinds:
       - name: 'Kitchen Roller Blind'
         type: 'blind'
