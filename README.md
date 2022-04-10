@@ -41,7 +41,7 @@ mqtt:
 # Global TCP Config for Motorised Blind Hub Communication
 tcp:
   async: false
-  timeout: 1000
+  timeout: 10
   retry: 5
 
 # Motorised Blind Hubs
@@ -72,7 +72,7 @@ hubs:
 
 **Where:**
 - `tcp.async`: if `true`, all TCP commands will be run at the same time. If `false`, commands will be queued up and ran in sequence.
-- `tcp.timeout`: how long to wait before a TCP command times out without getting a response from the hub.
+- `tcp.timeout`: how long (seconds) to wait before a TCP command times out without getting a response from the hub.
 - `tcp.retry`: how many times to retry before failing.
 - `hub.host/port` is the host/port of your blind hub
 - `hub.type` is the brand of the blind hub. `acmeda` and `dooya` are supported.
