@@ -1,0 +1,15 @@
+version: "3.5"
+services:
+  nodejs:
+    build: .
+    container_name: "philips-dynalite-mqtt"
+    volumes:
+      - ./config:/usr/src/app/config
+      - ./data:/usr/src/app/data
+    networks:
+      - app
+  bash:
+    build: .
+    entrypoint: /bin/sh
+networks:
+  app:
