@@ -24,25 +24,26 @@ const connect = (
   );
 
   client.on("error", (err) => {
-    console.log(`Mqtt error: ${err.message}`);
+    console.info(`Mqtt error: ${err.message}`);
   });
 
   client.on("connect", () => {
-    console.log("Connected to mqtt");
-    publish(availabilityTopic, "online");
+    console.info("Connected to mqtt");
+    onPublish(availabilityTopic, "online");
     onConnected(client);
   });
 
   client.on("close", () => {
-    console.log("Mqtt connection closed");
+    console.info("Mqtt connection closed");
+    onPublish(availabilityTopic, "offline");
   });
 
   const onMessage = (callback: mqtt.OnMessageCallback) => {
     client.on("message", callback);
   };
 
-  const publish = (topic: string, payload: string) => {
-    //console.log(`Sending payload: ${payload} to topic: ${topic}`);
+  const onPublish = (topic: string, payload: string) => {
+    //console.info(`Sending payload: ${payload} to topic: ${topic}`);
     client.publish(topic, payload, {
       qos: config.qos,
       retain: config.retain,
@@ -51,7 +52,7 @@ const connect = (
 
   return {
     onMessage,
-    publish,
+    onPublish,
   };
 };
 

@@ -8,14 +8,14 @@ const connect = (
 ) => {
   const client = new net.Socket();
   let timedOut = false;
-  console.log("CLIENT CONNECTING");
+  console.info("NET TRY", host, port);
   client.on("connect", () => {
-    console.log("Connected to roller-blind");
+    console.info("Connected to roller-blind");
     client.setTimeout(idleSeconds * 1000);
   });
 
   client.on("close", () => {
-    console.log("roller-blind connection closed");
+    console.info("roller-blind connection closed");
 
     if (timedOut) {
       client.connect(port, host);
@@ -30,11 +30,11 @@ const connect = (
   });
 
   client.on("error", (err) => {
-    console.log(`Blind error: ${err.message}`);
+    console.info(`Blind error: ${err.message}`);
   });
 
   client.on("timeout", () => {
-    console.log(
+    console.info(
       `No TCP communication detected in the last ${idleSeconds} seconds. Force reconnecting...`
     );
     timedOut = true;
@@ -48,10 +48,10 @@ const connect = (
   };
 
   const write = (data: Buffer, cb?: (error?: Error) => void) => {
-    console.log("TCP command to be sent:", data);
+    console.info("TCP command to be sent:", data);
     client.write(data, (err) => {
       if (err) {
-        console.log(`Sending message to roller-blind failed: ${err.message}`);
+        console.info(`Sending message to roller-blind failed: ${err.message}`);
       }
       cb();
     });

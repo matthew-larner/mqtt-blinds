@@ -2,7 +2,7 @@ import { OnMessageCallback } from "mqtt";
 
 export interface MqttClient {
   onMessage: (callback: OnMessageCallback) => void;
-  publish: (topic: string, payload: string) => void;
+  onPublish: (topic: string, payload: string) => void;
 }
 
 export interface BlindRollerClient {

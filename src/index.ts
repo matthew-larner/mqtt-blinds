@@ -4,7 +4,7 @@ import * as fs from "fs";
 import mqtt from "./entities/mqtt";
 import rollerBlind from "./entities/rollerBlinds";
 import * as homeAssistantHandler from "./entities/homeAssistantHandler";
-import * as rollerBlindHandler from "./entities/rollerBlindHandler";
+import * as rollerBlindHandler from "./entities/rollerBlindsHandler";
 
 try {
   // Get and parse configuration

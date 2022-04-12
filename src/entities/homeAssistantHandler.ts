@@ -1,6 +1,7 @@
 import * as mqtt from "mqtt";
 
 import { Handler } from "../contracts";
+import { toSnakeCase } from "./utils";
 
 let mqttConfigGlobal: any;
 export const startup =
@@ -11,31 +12,37 @@ export const startup =
       if (mqttConfig.discovery) {
         let sendOnce: number;
         let publish_topic: boolean;
-        hubs.forEach((areaKey) => {
+        hubs.forEach((hub: any) => {
           sendOnce = 0;
           publish_topic = true;
-          const channelKeys = areaKey.blinds;
-          channelKeys.forEach((channelKey) => {
-            const { type, name: channelName } = channelKey;
-
+          const { blinds } = hub;
+          blinds.forEach((blind: any) => {
+            const { type, name } = blind;
+            const blindName = toSnakeCase(name);
             let payload: object;
             let topic: string;
+
             if (type === "blind" || type === "curtain") {
-              topic = `${mqttConfig.discovery_prefix}/${type}/${channelName}`;
+              topic = `${mqttConfig.discovery_prefix}/cover/${blindName}/config`;
+
               payload = {
-                name: `${type} ${channelName}`,
-                device_class: type,
-                state_topic: `${mqttConfig.topic_prefix}/${type}c${channelName}/state`,
-                availabilityTopic: `${mqttConfig.availabilityTopic}`,
+                name: `${name}`,
+                unique_id: blindName,
+                command_topic: `${mqttConfig.topic_prefix}/${blindName}/set`,
+                position_topic: `${mqttConfig.topic_prefix}/${blindName}/position`,
+                set_position_topic: `${mqttConfig.topic_prefix}/${blindName}/position/set`,
+                availability_topic: `${mqttConfig.topic}`,
+                device_class: type == "blind" ? type : "awning",
+                payload_stop: type == "blind" ? null : "stop",
               };
             } else {
               // skip other types
-              console.log("Home Assistant Discovery skipping type:", type);
+              console.info("Home Assistant Discovery skipping type:", type);
               return;
             }
 
             if (publish_topic) {
-              console.log(
+              console.info(
                 `Sending payload: ${JSON.stringify(
                   payload
                 )} to topic: ${topic} `
@@ -51,18 +58,17 @@ export const startup =
     };
 
     const subscribeTopics = () => {
-      const areaKeys = hubs;
-
-      areaKeys.forEach((areaKey) => {
-        const channelKeys = areaKey.blinds;
-        channelKeys.forEach((channelKey) => {
-          const topic = `${mqttConfig.topic_prefix}/a${areaKey}c${channelKey}/set`;
-
+      hubs.forEach((hub) => {
+        const { blinds } = hub;
+        blinds.forEach((blind) => {
+          // TODO: to be replace by required topic
+          let topic = `${mqttConfig.topic_prefix}/a${hub}c${blind}/set`;
+          topic = `office/door/lock`;
           client.subscribe(topic, (err) => {
             if (err) {
-              console.log(`Cannot subscribe to topic ${topic}: ${err}`);
+              console.info(`Cannot subscribe to topic ${topic}: ${err}`);
             } else {
-              console.log("Subscribed to topic:", topic);
+              console.info("Subscribed to topic:", topic);
             }
           });
         });
@@ -77,12 +83,13 @@ export const commandsHandler =
   ({}: Handler) =>
   (topic: string, message: Buffer) => {
     try {
-      console.log(
+      console.info(
         "Topic:",
         topic,
         "Received message: ",
         message.toString().replace(/\s/g, "")
       );
+      // TODO: other required process will be place here
     } catch (error) {
       console.error("Home assistant commandHandler error:", error);
     }

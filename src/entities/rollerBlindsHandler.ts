@@ -5,7 +5,7 @@ import * as util from "./utils";
 export const commandsHandler =
   ({ mqttClient, blindRollerClient, hubs, mqttConfig }: Handler) =>
   (data: Buffer) => {
-    console.log("Received mqtt-blind message:", data);
+    console.info("Received mqtt-blind message:", data);
 
     const firstDecimal = data[0];
 
@@ -15,7 +15,7 @@ export const commandsHandler =
       const channel = thirdDecimal === 87 ? 0 : data[11]; // use channel 0 for temperature
 
       if (!hubs.area[area] || !hubs.area[area].channel[channel]) {
-        console.log(
+        console.info(
           `Dynalite ignored message with area: ${area} channel: ${channel}`
         );
         return;
@@ -24,7 +24,7 @@ export const commandsHandler =
       const sendMqttMessage = (route: string) => (payload: string) => {
         const topic = `${mqttConfig.topic_prefix}/a${area}c${channel}/${route}`;
 
-        mqttClient.publish(topic, payload);
+        mqttClient.onPublish(topic, payload);
       };
       const sendMqttStateMessage = sendMqttMessage("state");
       const sendMqttTemperatureMessage = sendMqttMessage("temp");
@@ -53,7 +53,7 @@ export const commandsHandler =
 
           blindRollerClient.write(Buffer.from(buffer));
         } else {
-          console.log(
+          console.info(
             "Dynalite ignored message with 14th character decimal:",
             code
           );
@@ -93,12 +93,15 @@ export const commandsHandler =
       } else if (thirdDecimal === 16) {
         processChannelLevel(data[12].toString());
       } else {
-        console.log(
+        console.info(
           "Dynalite ignored message 3rd character decimal:",
           thirdDecimal
         );
       }
     } else {
-      console.log("Dynalite ignored message 1st character with:", firstDecimal);
+      console.info(
+        "Dynalite ignored message 1st character with:",
+        firstDecimal
+      );
     }
   };
