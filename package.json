@@ -1,9 +1,9 @@
 {
-  "name": "philips-dynalite-mqtt",
+  "name": "mqtt-blinds",
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com:matthew-larner/philips-dynalite-mqtt.git"
+    "url": "https://github.com/matthew-larner/mqtt-blinds.git"
   },
   "private": true,
   "main": "./dist/index.js",

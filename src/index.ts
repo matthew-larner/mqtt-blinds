@@ -1,29 +1,48 @@
-import * as YAML from 'yaml';
-import * as fs from 'fs';
+import * as YAML from "yaml";
+import * as fs from "fs";
 
-import mqtt from './entities/mqtt';
-import dynalite from './entities/dynalite';
-import * as homeAssistantHandler from './entities/homeAssistantHandler';
-import * as dynaliteHander from './entities/dynaliteHandler';
-import * as dbmanager from './entities/dbmanager';
+import mqtt from "./entities/mqtt";
+import rollerBlind from "./entities/rollerBlinds";
+import * as homeAssistantHandler from "./entities/homeAssistantHandler";
+import * as rollerBlindHandler from "./entities/rollerBlindHandler";
 
 try {
   // Get and parse configuration
-  const config = YAML.parse(fs.readFileSync('./config/configuration.yml', 'utf8'));
-  const {
-    mqtt: mqttConfig,
-    dynalite: { bridges: [bridges] }
-  } = config;
-  dbmanager.dbinit(bridges);
-  const mqttClient = mqtt(mqttConfig, homeAssistantHandler.startup({ mqttConfig, bridges }));
-  const dynaliteClient = dynalite(bridges.host, bridges.port, bridges.reconnect_time, bridges.auto_reconnect_time);
+  const config = YAML.parse(
+    fs.readFileSync("./config/configuration.yml", "utf8")
+  );
 
-  mqttClient.onMessage(homeAssistantHandler.commandsHandler({ mqttClient, dynaliteClient, bridges }));
-  dynaliteClient.onMessage(dynaliteHander.commandsHandler({ mqttClient, dynaliteClient, bridges, mqttConfig }));
+  const { mqtt: mqttConfig, hubs } = config;
 
+  const mqttClient = mqtt(
+    mqttConfig,
+    homeAssistantHandler.startup({ mqttConfig, hubs })
+  );
+  hubs.forEach((hub: any) => {
+    const blindRollerClient = rollerBlind(
+      hub.host,
+      hub.port,
+      hub.reconnectTime,
+      hub.autoReconnectTime
+    );
+
+    mqttClient.onMessage(
+      homeAssistantHandler.commandsHandler({
+        mqttClient,
+        blindRollerClient,
+        hubs,
+      })
+    );
+    blindRollerClient.onMessage(
+      rollerBlindHandler.commandsHandler({
+        mqttClient,
+        blindRollerClient,
+        hubs,
+        mqttConfig,
+      })
+    );
+  });
 } catch (error) {
   console.error(error.message);
-  console.log('closing !!!');
-  dbmanager.dbclose();
   process.exit(1);
 }

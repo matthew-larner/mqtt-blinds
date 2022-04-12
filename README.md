@@ -1,10 +1,13 @@
 # MQTT Blinds
+
 A containerised app to control Acmeda/Dooya roller blinds via MQTT to be used with home automation like Home Assistant.
 
 ## How it works
-This docker container communicates with motorised blinds via TCP commands. It supports 2-way communication (MQTT->TCP and TCP->MQTT). It will automatically create blinds/curtains in Home Assistant if you have [MQTT discovery enabled](https://www.home-assistant.io/docs/mqtt/discovery/). 
+
+This docker container communicates with motorised blinds via TCP commands. It supports 2-way communication (MQTT->TCP and TCP->MQTT). It will automatically create blinds/curtains in Home Assistant if you have [MQTT discovery enabled](https://www.home-assistant.io/docs/mqtt/discovery/).
 
 ## Setup Steps
+
 1. Create a [MQTT server](https://hub.docker.com/_/eclipse-mosquitto)
 2. Setup config file `configuration.yml` in `/config` directory (example below)
 3. Setup docker compose file (example below)
@@ -12,6 +15,7 @@ This docker container communicates with motorised blinds via TCP commands. It su
 5. Run the app by running `docker-compose up --build`
 
 ## Example Docker Compose File
+
 ```
 version: '3'
 services:
@@ -39,7 +43,7 @@ mqtt:
   discovery: true
   discovery_prefix: homeassistant
   topic_prefix: mqtt-blinds
-  availability_topic: mqtt-blinds/available
+  availabilityTopic: mqtt-blinds/available
 
 # Global TCP Config for Motorised Blind Hub Communication
 tcp:
@@ -73,6 +77,7 @@ hubs:
 ```
 
 **Where:**
+
 - `tcp.async`: if `true`, all TCP commands will be run at the same time. If `false`, commands will be queued up and ran in sequence.
 - `tcp.timeout`: how long (seconds) to wait before a TCP command times out without getting a response from the hub.
 - `hub.host/port` is the host/port of your blind hub
@@ -81,4 +86,3 @@ hubs:
 - `blinds.name`: The name to be displayed in Home Assistant
 - `blinds.type` is either: `blind` (a motorised roller blind), `curtain` (a motorised curtain or awning)
 - `blinds.motor_address`: The address of the motor. You can get this by polling your motorised blind hub/API
-
