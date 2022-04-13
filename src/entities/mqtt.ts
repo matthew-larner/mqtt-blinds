@@ -1,4 +1,5 @@
 import * as mqtt from "mqtt";
+import { logger } from "./utils";
 
 var availabilityTopic: string;
 const connect = (
@@ -24,17 +25,17 @@ const connect = (
   );
 
   client.on("error", (err) => {
-    console.info(`Mqtt error: ${err.message}`);
+    logger.info(`Mqtt error: ${err.message}`);
   });
 
   client.on("connect", () => {
-    console.info("Connected to mqtt");
+    logger.info("Connected to mqtt");
     onPublish(availabilityTopic, "online");
     onConnected(client);
   });
 
   client.on("close", () => {
-    console.info("Mqtt connection closed");
+    logger.info("Mqtt connection closed");
     onPublish(availabilityTopic, "offline");
   });
 
@@ -43,7 +44,7 @@ const connect = (
   };
 
   const onPublish = (topic: string, payload: string) => {
-    //console.info(`Sending payload: ${payload} to topic: ${topic}`);
+    //logger.info(`Sending payload: ${payload} to topic: ${topic}`);
     client.publish(topic, payload, {
       qos: config.qos,
       retain: config.retain,

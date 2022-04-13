@@ -1,3 +1,5 @@
+import { logger } from "./utils";
+
 const mqtt = require("mqtt");
 const fs = require("fs");
 const YAML = require("yaml");
@@ -29,7 +31,7 @@ const client = mqtt.connect(
 client.on("connect", function () {
   setInterval(function () {
     const random = Math.random() * 50;
-    console.info("RANDOM", random);
+    logger.info("RANDOM", random);
     if (random < 30) {
       client.onPublish("home/light/on", `simple mqtt: ${random.toString()}`);
     }
@@ -38,9 +40,9 @@ client.on("connect", function () {
 
 client.on("connect", function () {
   client.subscribe("home/light/isOn");
-  console.info("Client has subscribe successfully");
+  logger.info("Client has subscribe successfully");
 });
 
 client.on("message", function (topic, message) {
-  console.info("MESSAGE", message.toString());
+  logger.info("MESSAGE", message.toString());
 });

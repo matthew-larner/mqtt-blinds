@@ -1,11 +1,16 @@
 import * as mqtt from "mqtt";
 import * as util from "./utils";
 import { Handler } from "../contracts";
-import { toSnakeCase } from "./utils";
+import { logger, toSnakeCase } from "./utils";
 
 export const startup =
   ({ mqttConfig, hubs }) =>
   (client: mqtt.MqttClient) => {
+    if (!mqttConfig.Discovery) {
+      return console.warn(
+        "MQTT Discovery is set to false: cannot go any further"
+      );
+    }
     const startupChannelPublish = () => {
       if (mqttConfig.discovery) {
         let sendOnce: number;
@@ -37,12 +42,13 @@ export const startup =
               };
             } else {
               // skip other types
-              console.info("Home Assistant Discovery skipping type:", type);
+
+              logger.info("Home Assistant Discovery skipping type:", type);
               return;
             }
 
             if (publish_topic) {
-              console.info(
+              logger.info(
                 `Sending payload: ${JSON.stringify(
                   payload
                 )} to topic: ${topic} `
@@ -82,9 +88,9 @@ export const startup =
           topics.forEach((topic) => {
             client.subscribe(topic, (err) => {
               if (err) {
-                console.info(`Cannot subscribe to topic ${topic}: ${err}`);
+                logger.info(`Cannot subscribe to topic ${topic}: ${err}`);
               } else {
-                console.info("Subscribed to topic:", topic);
+                logger.info("Subscribed to topic:", topic);
               }
             });
           });
@@ -102,7 +108,7 @@ export const commandsHandler =
     const payload = message.toString().replace(/\s/g, "");
 
     const operation = topic.split("/")[topic.split("/").length - 1];
-    console.log("= = = = ", operation);
+
     try {
       /**
        * config_topic
@@ -137,10 +143,18 @@ const setPositionTopic = (
     // send TCP Command
     const command = `!${hub.bridge_address}${blind.motor_address}m${numberToSet};`;
 
+    if (!isValidCommand(command)) {
+      throw new Error("Invalid command format");
+    }
+
     blindRollerClient.write(command, (err: any) => {
       sendMqttMessage(topic, command);
     });
   });
+};
+
+const isValidCommand = (command) => {
+  return true;
 };
 
 const commandTopic = (

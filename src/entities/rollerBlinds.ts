@@ -1,4 +1,5 @@
 import * as net from "net";
+import { logger } from "./utils";
 
 const connect = (
   host: string,
@@ -8,14 +9,14 @@ const connect = (
 ) => {
   const client = new net.Socket();
   let timedOut = false;
-  console.info("NET TRY", host, port);
+
   client.on("connect", () => {
-    console.info("Connected to roller-blind");
+    logger.info("Connected to roller-blind");
     client.setTimeout(idleSeconds * 1000);
   });
 
   client.on("close", () => {
-    console.info("roller-blind connection closed");
+    logger.info("roller-blind connection closed");
 
     if (timedOut) {
       client.connect(port, host);
@@ -30,11 +31,11 @@ const connect = (
   });
 
   client.on("error", (err) => {
-    console.info(`Blind error: ${err.message}`);
+    logger.info(`Blind error: ${err.message}`);
   });
 
   client.on("timeout", () => {
-    console.info(
+    logger.info(
       `No TCP communication detected in the last ${idleSeconds} seconds. Force reconnecting...`
     );
     timedOut = true;
@@ -48,10 +49,10 @@ const connect = (
   };
 
   const write = (data: string, cb?: (error?: Error) => void) => {
-    console.info("TCP command to be sent:", data);
+    logger.info("TCP command to be sent:", data);
     client.write(data, (err) => {
       if (err) {
-        console.info(`Sending message to roller-blind failed: ${err.message}`);
+        logger.info(`Sending message to roller-blind failed: ${err.message}`);
       }
       cb();
     });
