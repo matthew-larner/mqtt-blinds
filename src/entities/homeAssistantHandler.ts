@@ -1,28 +1,23 @@
 import * as mqtt from "mqtt";
 import * as util from "./utils";
-import { Handler } from "../contracts";
-import { logger, toSnakeCase } from "./utils";
+import { BlindRollerClient, Handler, IBlind, IHub } from "../contracts";
+import { getKeys, getRoller, logger, toSnakeCase } from "./utils";
 
 export const startup =
   ({ mqttConfig, hubs }) =>
   (client: mqtt.MqttClient) => {
-    if (!mqttConfig.Discovery) {
-      return console.warn(
-        "MQTT Discovery is set to false: cannot go any further"
-      );
-    }
     const startupChannelPublish = () => {
       if (mqttConfig.discovery) {
         let sendOnce: number;
         let publish_topic: boolean;
-        hubs.forEach((hub: any) => {
+        hubs.forEach((hub: IHub) => {
           sendOnce = 0;
           publish_topic = true;
           const { blinds } = hub;
 
-          blinds.forEach((blind: any) => {
+          blinds.forEach((blind: IBlind) => {
             const { type, name } = blind;
-            const blindName = name;
+            const blindName = toSnakeCase(name);
 
             let payload: object;
             let topic: string;
@@ -33,10 +28,10 @@ export const startup =
               payload = {
                 name: `${name}`,
                 unique_id: blindName,
-                command_topic: `${mqttConfig.topic_prefix}/${blindName}/set`,
-                position_topic: `${mqttConfig.topic_prefix}/${blindName}/position`,
-                set_position_topic: `${mqttConfig.topic_prefix}/${blindName}/position/set`,
-                availability_topic: `${mqttConfig.availability_topic}`,
+                command_topic: `${hub.bridge_address}/${blind.motor_address}/${mqttConfig.topic_prefix}/${blindName}/set`,
+                position_topic: `${hub.bridge_address}/${blind.motor_address}/${mqttConfig.topic_prefix}/${blindName}/position`,
+                set_position_topic: `${hub.bridge_address}/${blind.motor_address}/${mqttConfig.topic_prefix}/${blindName}/position/set`,
+                availability_topic: `${hub.bridge_address}/${blind.motor_address}/${mqttConfig.availability_topic}`,
                 device_class: type == "blind" ? type : "awning",
                 payload_stop: type == "blind" ? null : "stop",
               };
@@ -64,18 +59,17 @@ export const startup =
     };
 
     const subscribeTopics = () => {
-      hubs.forEach((hub) => {
+      hubs.forEach((hub: IHub) => {
         const { blinds } = hub;
-
-        blinds.forEach((blind) => {
-          const { name } = blind;
+        blinds.forEach((blind: IBlind) => {
+          const { name, motor_address } = blind;
           const blindName = toSnakeCase(name);
 
-          let config_topic = `${mqttConfig.discovery_prefix}/cover/${blindName}/config`;
-          let command_topic = `${mqttConfig.topic_prefix}/${blindName}/set`;
-          let position_topic = `${mqttConfig.topic_prefix}/${blindName}/position`;
-          let set_position_topic = `${mqttConfig.topic_prefix}/${blindName}/position/set`;
-          let availability_topic = `${mqttConfig.availability_topic}`;
+          let config_topic = `${hub.bridge_address}/${motor_address}/${mqttConfig.discovery_prefix}/cover/${blindName}/config`;
+          let command_topic = `${hub.bridge_address}/${motor_address}/${mqttConfig.topic_prefix}/${blindName}/set`;
+          let position_topic = `${hub.bridge_address}/${motor_address}/${mqttConfig.topic_prefix}/${blindName}/position`;
+          let set_position_topic = `${hub.bridge_address}/${motor_address}/${mqttConfig.topic_prefix}/${blindName}/position/set`;
+          let availability_topic = `${hub.bridge_address}/${motor_address}/${mqttConfig.availability_topic}`;
 
           const topics = [
             config_topic,
@@ -103,26 +97,20 @@ export const startup =
   };
 
 export const commandsHandler =
-  ({ mqttClient, blindRollerClient, hub, bridge_address }: Handler) =>
+  ({ mqttClient, blindRollerClient: allBlindRollerClient, hubs }: Handler) =>
   (topic: string, message: Buffer) => {
-    const payload = message.toString().replace(/\s/g, "");
+    const { payload, address, operation, motor } = getKeys(topic, message);
 
-    const operation = topic.split("/")[topic.split("/").length - 1];
+    const blindRollerClient = allBlindRollerClient[address];
+    const { hub, blind } = getRoller(hubs, address, motor);
 
     try {
-      /**
-       * config_topic
-command_topic
-position_topic
-set_position_topic
-availability_topic
-       */
       switch (operation) {
         case "set":
-          setPositionTopic(hub, blindRollerClient, topic, payload);
+          setPositionTopic(hub, blind, blindRollerClient, topic, payload);
           break;
         case "config":
-          commandTopic(hub, blindRollerClient, topic, payload);
+          commandTopic(hub, blind, blindRollerClient, topic, payload);
           break;
       }
     } catch (error) {
@@ -131,39 +119,46 @@ availability_topic
   };
 
 const setPositionTopic = (
-  hub: any,
-  blindRollerClient: any,
+  hub: IHub,
+  blind: IBlind,
+  blindRollerClient: BlindRollerClient,
   topic: string,
   payload: string
 ) => {
-  const { blinds } = hub;
+  const num = parseInt(payload);
+
+  if (isNaN(num)) {
+    return logger.error("not a number");
+  }
   const numberToSet: string = util.paddedNumber(parseInt(payload), 3);
 
-  blinds.forEach((blind: any, i: number) => {
-    // send TCP Command
-    const command = `!${hub.bridge_address}${blind.motor_address}m${numberToSet};`;
+  // send TCP Command
+  const command = `!${hub.bridge_address}${blind.motor_address}m${numberToSet};`;
 
-    blindRollerClient.write(command, (err: any) => {
-      sendMqttMessage(topic, command);
-    });
+  blindRollerClient.write(command, (err: any) => {
+    sendMqttMessage(topic, command);
   });
 };
 
 const commandTopic = (
-  hub: any,
-  blindRollerClient: any,
+  hub: IHub,
+  blind: IBlind,
+  blindRollerClient: BlindRollerClient,
   topic: string,
   payload: string
 ) => {
-  const { blinds } = hub;
-  const mess = payload === "open" ? "o" : payload === "close" ? "c" : "s";
-  blinds.forEach((blind: any, i: number) => {
-    // send TCP Command
-    const command = `!${hub.bridge_address}${blind.motor_address}${mess}`;
+  const validPayload = ["open", "close", "stop"];
+  if (!validPayload.includes(payload)) {
+    return logger.error('Only allowed: "open", "close", "stop"');
+  }
 
-    blindRollerClient.write(command, (err) => {
-      sendMqttMessage(topic, mess);
-    });
+  const mess = payload === "open" ? "o" : payload === "close" ? "c" : "s";
+
+  // send TCP Command
+  const command = `!${hub.bridge_address}${blind.motor_address}${mess}`;
+
+  blindRollerClient.write(command, (err) => {
+    sendMqttMessage(topic, mess);
   });
 };
 

@@ -1,3 +1,5 @@
+import { IHub } from "../contracts";
+
 export const toSnakeCase = (str: string) => {
   const convert = (str: string) =>
     str &&
@@ -24,4 +26,21 @@ export const logger = {
   info: (message: string) => console.info(message),
   warn: (message: string) => console.warn(message),
   error: (message: string) => console.error(message),
+};
+
+export const getRoller = (hubs: IHub[], address: string, motor: string) => {
+  const hub = hubs.find((hub: IHub) => hub.bridge_address === address);
+  const blind = hub.blinds.find(
+    (blind) => blind.motor_address.toLowerCase() === motor.toLowerCase()
+  );
+
+  return { hub, blind };
+};
+
+export const getKeys = (topic: string, message) => {
+  const payload = message.toString().replace(/\s/g, "");
+  const address = topic.split("/")[0];
+  const motor = topic.split("/")[1];
+  const operation = topic.split("/")[topic.split("/").length - 1];
+  return { payload, address, motor, operation };
 };
