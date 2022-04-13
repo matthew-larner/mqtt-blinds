@@ -47,7 +47,7 @@ const connect = (
     client.on("data", callback);
   };
 
-  const write = (data: Buffer, cb?: (error?: Error) => void) => {
+  const write = (data: string, cb?: (error?: Error) => void) => {
     console.info("TCP command to be sent:", data);
     client.write(data, (err) => {
       if (err) {

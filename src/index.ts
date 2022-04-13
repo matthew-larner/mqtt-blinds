@@ -18,7 +18,7 @@ try {
     mqttConfig,
     homeAssistantHandler.startup({ mqttConfig, hubs })
   );
-  hubs.forEach((hub: any) => {
+  hubs.forEach((hub: any, i: number) => {
     const blindRollerClient = rollerBlind(
       hub.host,
       hub.port,
@@ -30,14 +30,14 @@ try {
       homeAssistantHandler.commandsHandler({
         mqttClient,
         blindRollerClient,
-        hubs,
+        hub,
       })
     );
     blindRollerClient.onMessage(
       rollerBlindHandler.commandsHandler({
         mqttClient,
         blindRollerClient,
-        hubs,
+        hub,
         mqttConfig,
       })
     );

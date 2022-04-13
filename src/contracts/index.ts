@@ -7,12 +7,13 @@ export interface MqttClient {
 
 export interface BlindRollerClient {
   onMessage: (callback: (data: Buffer) => void) => void;
-  write: (data: Buffer, cb?: (error?: Error) => void) => void;
+  write: (data: any, cb?: (error?: Error) => void) => void;
 }
 
 export interface Handler {
   mqttClient: MqttClient;
   blindRollerClient: BlindRollerClient;
-  hubs?: any;
+  hub?: any;
   mqttConfig?: any;
+  bridge_address?: any;
 }

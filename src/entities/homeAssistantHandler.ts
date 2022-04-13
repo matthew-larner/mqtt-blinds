@@ -1,14 +1,12 @@
 import * as mqtt from "mqtt";
-
+import * as util from "./utils";
 import { Handler } from "../contracts";
 import { toSnakeCase } from "./utils";
 
-let mqttConfigGlobal: any;
 export const startup =
   ({ mqttConfig, hubs }) =>
   (client: mqtt.MqttClient) => {
     const startupChannelPublish = () => {
-      mqttConfigGlobal = mqttConfig;
       if (mqttConfig.discovery) {
         let sendOnce: number;
         let publish_topic: boolean;
@@ -16,9 +14,11 @@ export const startup =
           sendOnce = 0;
           publish_topic = true;
           const { blinds } = hub;
+
           blinds.forEach((blind: any) => {
             const { type, name } = blind;
-            const blindName = toSnakeCase(name);
+            const blindName = name;
+
             let payload: object;
             let topic: string;
 
@@ -31,7 +31,7 @@ export const startup =
                 command_topic: `${mqttConfig.topic_prefix}/${blindName}/set`,
                 position_topic: `${mqttConfig.topic_prefix}/${blindName}/position`,
                 set_position_topic: `${mqttConfig.topic_prefix}/${blindName}/position/set`,
-                availability_topic: `${mqttConfig.topic}`,
+                availability_topic: `${mqttConfig.availability_topic}`,
                 device_class: type == "blind" ? type : "awning",
                 payload_stop: type == "blind" ? null : "stop",
               };
@@ -60,16 +60,33 @@ export const startup =
     const subscribeTopics = () => {
       hubs.forEach((hub) => {
         const { blinds } = hub;
+
         blinds.forEach((blind) => {
-          // TODO: to be replace by required topic
-          let topic = `${mqttConfig.topic_prefix}/a${hub}c${blind}/set`;
-          topic = `office/door/lock`;
-          client.subscribe(topic, (err) => {
-            if (err) {
-              console.info(`Cannot subscribe to topic ${topic}: ${err}`);
-            } else {
-              console.info("Subscribed to topic:", topic);
-            }
+          const { name } = blind;
+          const blindName = toSnakeCase(name);
+
+          let config_topic = `${mqttConfig.discovery_prefix}/cover/${blindName}/config`;
+          let command_topic = `${mqttConfig.topic_prefix}/${blindName}/set`;
+          let position_topic = `${mqttConfig.topic_prefix}/${blindName}/position`;
+          let set_position_topic = `${mqttConfig.topic_prefix}/${blindName}/position/set`;
+          let availability_topic = `${mqttConfig.availability_topic}`;
+
+          const topics = [
+            config_topic,
+            command_topic,
+            position_topic,
+            set_position_topic,
+            availability_topic,
+          ];
+
+          topics.forEach((topic) => {
+            client.subscribe(topic, (err) => {
+              if (err) {
+                console.info(`Cannot subscribe to topic ${topic}: ${err}`);
+              } else {
+                console.info("Subscribed to topic:", topic);
+              }
+            });
           });
         });
       });
@@ -80,17 +97,68 @@ export const startup =
   };
 
 export const commandsHandler =
-  ({}: Handler) =>
+  ({ mqttClient, blindRollerClient, hub, bridge_address }: Handler) =>
   (topic: string, message: Buffer) => {
+    const payload = message.toString().replace(/\s/g, "");
+
+    const operation = topic.split("/")[topic.split("/").length - 1];
+    console.log("= = = = ", operation);
     try {
-      console.info(
-        "Topic:",
-        topic,
-        "Received message: ",
-        message.toString().replace(/\s/g, "")
-      );
-      // TODO: other required process will be place here
+      /**
+       * config_topic
+command_topic
+position_topic
+set_position_topic
+availability_topic
+       */
+      switch (operation) {
+        case "set":
+          setPositionTopic(hub, blindRollerClient, topic, payload);
+          break;
+        case "config":
+          commandTopic(hub, blindRollerClient, topic, payload);
+          break;
+      }
     } catch (error) {
       console.error("Home assistant commandHandler error:", error);
     }
   };
+
+const setPositionTopic = (
+  hub: any,
+  blindRollerClient: any,
+  topic: string,
+  payload: string
+) => {
+  const { blinds } = hub;
+  const numberToSet: string = util.paddedNumber(parseInt(payload), 3);
+
+  blinds.forEach((blind: any, i: number) => {
+    // send TCP Command
+    const command = `!${hub.bridge_address}${blind.motor_address}m${numberToSet};`;
+
+    blindRollerClient.write(command, (err: any) => {
+      sendMqttMessage(topic, command);
+    });
+  });
+};
+
+const commandTopic = (
+  hub: any,
+  blindRollerClient: any,
+  topic: string,
+  payload: string
+) => {
+  const { blinds } = hub;
+  const mess = payload === "open" ? "o" : payload === "close" ? "c" : "s";
+  blinds.forEach((blind: any, i: number) => {
+    // send TCP Command
+    const command = `!${hub.bridge_address}${blind.motor_address}${mess}`;
+
+    blindRollerClient.write(command, (err) => {
+      sendMqttMessage(topic, mess);
+    });
+  });
+};
+
+const sendMqttMessage = (topic: string, message: string) => {};
