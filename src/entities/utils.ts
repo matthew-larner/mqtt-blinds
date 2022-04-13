@@ -21,7 +21,7 @@ export const paddedNumber = (number: number, length: number) => {
 };
 
 export const logger = {
-  info: (...parameters: any[]) => logger.info(parameters),
+  info: (message: string) => console.info(message),
   warn: (message: string) => console.warn(message),
   error: (message: string) => console.error(message),
 };

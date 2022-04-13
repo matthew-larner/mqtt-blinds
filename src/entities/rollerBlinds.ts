@@ -49,7 +49,7 @@ const connect = (
   };
 
   const write = (data: string, cb?: (error?: Error) => void) => {
-    logger.info("TCP command to be sent:", data);
+    console.log("TCP command to be sent:", data);
     client.write(data, (err) => {
       if (err) {
         logger.info(`Sending message to roller-blind failed: ${err.message}`);

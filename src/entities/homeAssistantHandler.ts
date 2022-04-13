@@ -43,7 +43,7 @@ export const startup =
             } else {
               // skip other types
 
-              logger.info("Home Assistant Discovery skipping type:", type);
+              logger.info(`Home Assistant Discovery skipping type: ${type}`);
               return;
             }
 
@@ -90,7 +90,7 @@ export const startup =
               if (err) {
                 logger.info(`Cannot subscribe to topic ${topic}: ${err}`);
               } else {
-                logger.info("Subscribed to topic:", topic);
+                logger.info(`Subscribed to topic: ${topic}`);
               }
             });
           });
@@ -143,18 +143,10 @@ const setPositionTopic = (
     // send TCP Command
     const command = `!${hub.bridge_address}${blind.motor_address}m${numberToSet};`;
 
-    if (!isValidCommand(command)) {
-      throw new Error("Invalid command format");
-    }
-
     blindRollerClient.write(command, (err: any) => {
       sendMqttMessage(topic, command);
     });
   });
-};
-
-const isValidCommand = (command) => {
-  return true;
 };
 
 const commandTopic = (

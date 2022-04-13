@@ -31,7 +31,7 @@ const client = mqtt.connect(
 client.on("connect", function () {
   setInterval(function () {
     const random = Math.random() * 50;
-    logger.info("RANDOM", random);
+
     if (random < 30) {
       client.onPublish("home/light/on", `simple mqtt: ${random.toString()}`);
     }
@@ -44,5 +44,5 @@ client.on("connect", function () {
 });
 
 client.on("message", function (topic, message) {
-  logger.info("MESSAGE", message.toString());
+  console.log("MESSAGE", message.toString());
 });
