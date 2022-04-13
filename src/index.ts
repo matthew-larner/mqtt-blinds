@@ -5,7 +5,6 @@ import mqtt from "./entities/mqtt";
 import rollerBlind from "./entities/rollerBlinds";
 import * as homeAssistantHandler from "./entities/homeAssistantHandler";
 import * as rollerBlindHandler from "./entities/rollerBlindsHandler";
-import { logger } from "./entities/utils";
 import { BlindRollerClient, IHub } from "./contracts";
 
 try {
@@ -15,14 +14,20 @@ try {
   );
 
   const { mqtt: mqttConfig, hubs } = config;
+
   if (!mqttConfig.discovery) {
     throw new Error("MQTT Discovery is set to false: cannot go any further");
   }
+
+  // connect to mqtt and prepare subscription
   const mqttClient = mqtt(
     mqttConfig,
     homeAssistantHandler.startup({ mqttConfig, hubs })
   );
+
   const blindRollerClient: BlindRollerClient[] = [];
+
+  // connect to all hub ip ports
   hubs.forEach((hub: IHub, i: number) => {
     blindRollerClient[hub.bridge_address] = rollerBlind(
       hub.host,
@@ -31,6 +36,7 @@ try {
       hub.autoReconnectTime
     );
 
+    // listen blindRoller message per hub address
     blindRollerClient[hub.bridge_address].onMessage(
       rollerBlindHandler.commandsHandler({
         mqttClient,
@@ -40,6 +46,8 @@ try {
       })
     );
   });
+
+  // listen mqtt messages
   mqttClient.onMessage(
     homeAssistantHandler.commandsHandler({
       mqttClient,

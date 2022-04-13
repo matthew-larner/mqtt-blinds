@@ -6,6 +6,7 @@ import { getKeys, getRoller, logger, toSnakeCase } from "./utils";
 export const startup =
   ({ mqttConfig, hubs }) =>
   (client: mqtt.MqttClient) => {
+    // prepare initial topic and subscription
     const startupChannelPublish = () => {
       if (mqttConfig.discovery) {
         let sendOnce: number;
@@ -58,6 +59,7 @@ export const startup =
       }
     };
 
+    // prepare all subscription
     const subscribeTopics = () => {
       hubs.forEach((hub: IHub) => {
         const { blinds } = hub;
@@ -118,6 +120,7 @@ export const commandsHandler =
     }
   };
 
+// prepare and send TCP command for set topic
 const setPositionTopic = (
   hub: IHub,
   blind: IBlind,
@@ -140,6 +143,7 @@ const setPositionTopic = (
   });
 };
 
+// prepare and send TCP command for config topic
 const commandTopic = (
   hub: IHub,
   blind: IBlind,
@@ -162,4 +166,5 @@ const commandTopic = (
   });
 };
 
+// to be use if need to publish a message
 const sendMqttMessage = (topic: string, message: string) => {};

@@ -1,7 +1,6 @@
 import { Handler } from "../contracts";
 
 import * as util from "./utils";
-import { logger } from "./utils";
 
 export const commandsHandler =
   ({ mqttClient, blindRollerClient, hubs, mqttConfig }: Handler) =>
