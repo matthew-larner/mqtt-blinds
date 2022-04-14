@@ -1,5 +1,5 @@
 import * as net from "net";
-import { logger } from "./utils";
+import * as logger from "../lib/logger/logger";
 
 const connect = (
   host: string,

@@ -33,3 +33,9 @@ export interface Handler {
   mqttConfig?: any;
   bridge_address?: any;
 }
+
+export enum LogType {
+  INFO = "INFO",
+  WARN = "WARN",
+  ERROR = "ERROR",
+}

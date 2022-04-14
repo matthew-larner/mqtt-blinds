@@ -1,5 +1,5 @@
 import * as mqtt from "mqtt";
-import { logger } from "./utils";
+import * as logger from "../lib/logger/logger";
 
 var availabilityTopic: string;
 const connect = (
