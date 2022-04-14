@@ -1,7 +1,8 @@
 import * as mqtt from "mqtt";
 import * as util from "./utils";
 import { BlindRollerClient, Handler, IBlind, IHub } from "../contracts";
-import { getKeys, getRoller, logger, toSnakeCase } from "./utils";
+import { getKeys, getRoller, toSnakeCase } from "./utils";
+import * as logger from "../lib/logger/logger";
 
 export const startup =
   ({ mqttConfig, hubs }) =>
@@ -29,7 +30,7 @@ export const startup =
               payload = {
                 name: `${name}`,
                 unique_id: blindName,
-                command_topic: `${hub.bridge_address}/${blind.motor_address}/${mqttConfig.topic_prefix}/${blindName}/set`,
+                command_topic: `${hub.bridge_address}/${blind.motor_address}/${mqttConfig.topic_prefix}/cover/${blindName}/config`,
                 position_topic: `${hub.bridge_address}/${blind.motor_address}/${mqttConfig.topic_prefix}/${blindName}/position`,
                 set_position_topic: `${hub.bridge_address}/${blind.motor_address}/${mqttConfig.topic_prefix}/${blindName}/position/set`,
                 availability_topic: `${hub.bridge_address}/${blind.motor_address}/${mqttConfig.availability_topic}`,
@@ -99,8 +100,8 @@ export const startup =
   };
 
 export const commandsHandler =
-  ({ mqttClient, blindRollerClient: allBlindRollerClient, hubs }: Handler) =>
-  (topic: string, message: Buffer) => {
+  ({ blindRollerClient: allBlindRollerClient, hubs, mqttClient }: Handler) =>
+  async (topic: string, message: Buffer) => {
     const { payload, address, operation, motor } = getKeys(topic, message);
 
     const blindRollerClient = allBlindRollerClient[address];
@@ -109,10 +110,24 @@ export const commandsHandler =
     try {
       switch (operation) {
         case "set":
-          setPositionTopic(hub, blind, blindRollerClient, topic, payload);
+          setPositionTopic(
+            hub,
+            blind,
+            blindRollerClient,
+            topic,
+            payload,
+            mqttClient
+          );
           break;
         case "config":
-          commandTopic(hub, blind, blindRollerClient, topic, payload);
+          commandTopic(
+            hub,
+            blind,
+            blindRollerClient,
+            topic,
+            payload,
+            mqttClient
+          );
           break;
       }
     } catch (error) {
@@ -126,7 +141,8 @@ const setPositionTopic = (
   blind: IBlind,
   blindRollerClient: BlindRollerClient,
   topic: string,
-  payload: string
+  payload: string,
+  mqttClient: any
 ) => {
   const num = parseInt(payload);
 
@@ -139,7 +155,7 @@ const setPositionTopic = (
   const command = `!${hub.bridge_address}${blind.motor_address}m${numberToSet};`;
 
   blindRollerClient.write(command, (err: any) => {
-    sendMqttMessage(topic, command);
+    sendMqttMessage(mqttClient, topic, command, numberToSet);
   });
 };
 
@@ -149,22 +165,39 @@ const commandTopic = (
   blind: IBlind,
   blindRollerClient: BlindRollerClient,
   topic: string,
-  payload: string
+  payload: string,
+  mqttClient: any
 ) => {
   const validPayload = ["open", "close", "stop"];
   if (!validPayload.includes(payload)) {
     return logger.error('Only allowed: "open", "close", "stop"');
   }
 
-  const mess = payload === "open" ? "o" : payload === "close" ? "c" : "s";
+  const action = payload === "open" ? "o" : payload === "close" ? "c" : "s";
 
   // send TCP Command
-  const command = `!${hub.bridge_address}${blind.motor_address}${mess}`;
+  const command = `!${hub.bridge_address}${blind.motor_address}${action}`;
 
   blindRollerClient.write(command, (err) => {
-    sendMqttMessage(topic, mess);
+    sendMqttMessage(mqttClient, topic, action);
   });
 };
 
 // to be use if need to publish a message
-const sendMqttMessage = (topic: string, message: string) => {};
+const sendMqttMessage = (
+  mqttClient,
+  topic: string,
+  action: string,
+  position?: string
+) => {
+  let msg: Object;
+
+  msg = {
+    action,
+    position,
+  };
+
+  const payload = JSON.stringify(msg);
+  logger.info("send mqtt subscription topic " + payload);
+  mqttClient.onPublish(topic, payload);
+};

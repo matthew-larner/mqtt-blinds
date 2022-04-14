@@ -1,0 +1,42 @@
+# MQTT Settings
+mqtt:
+  broker: 127.0.0.1
+  port: 1883
+  username: xxxx
+  password: xxxx
+  qos: 2
+  retain: true
+  discovery: false
+  discovery_prefix: homeassistant
+  topic_prefix: mqtt-blinds
+  availability_topic: mqtt-blinds/available
+
+# Global TCP Config for Motorised Blind Hub Communication
+tcp:
+  async: false
+  timeout: 10 # seconds
+
+# Motorised Blind Hubs
+hubs:
+  - host: 127.0.0.1
+    port: 1487
+    type: "dooya"
+    bridge_address: "123"
+    blinds:
+      - name: "Bed 1 Roller Blind"
+        type: "blind"
+        motor_address: "D001"
+      - name: "Bed 1 Curtain"
+        type: "curtain"
+        motor_address: "D002"
+  - host: 127.0.0.1
+    port: 1487
+    type: "acmeda"
+    bridge_address: "456" # Leave blank for Acmeda
+    blinds:
+      - name: "Kitchen Roller Blind"
+        type: "blind"
+        motor_address: "L40"
+      - name: "Bed 4 Curtain"
+        type: "curtain"
+        motor_address: "53T"

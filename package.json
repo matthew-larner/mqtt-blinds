@@ -8,7 +8,7 @@
   "private": true,
   "main": "./dist/index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register tests/**/*.spec.ts",
+    "test": "nyc --reporter=lcov --reporter=text mocha -r ts-node/register tests/**/*.spec.ts",
     "start": "if-env NODE_ENV=local && npm run start:dev || npm run start:prod",
     "start:prod": "node ./dist/index.js",
     "start:dev": "tsc-watch --onSuccess \"npm run start:prod\" ",

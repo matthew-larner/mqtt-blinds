@@ -27,11 +27,15 @@ export interface BlindRollerClient {
 }
 
 export interface Handler {
-  mqttClient: MqttClient;
   blindRollerClient: BlindRollerClient[];
-  hubs?: any;
-  mqttConfig?: any;
-  bridge_address?: any;
+  hubs: any;
+  mqttClient: MqttClient;
+}
+
+export interface RollerBlindHandler {
+  mqttClient: MqttClient;
+  hubs: any;
+  mqttConfig: any;
 }
 
 export enum LogType {

@@ -22,12 +22,6 @@ export const paddedNumber = (number: number, length: number) => {
   return str;
 };
 
-export const logger = {
-  info: (message: string) => console.info(message),
-  warn: (message: string) => console.warn(message),
-  error: (message: string) => console.error(message),
-};
-
 export const getRoller = (hubs: IHub[], address: string, motor: string) => {
   const hub = hubs.find((hub: IHub) => hub.bridge_address === address);
   const blind = hub.blinds.find(

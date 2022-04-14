@@ -6,11 +6,11 @@ const connect = (
   config: any,
   onConnected: (client: mqtt.MqttClient) => void
 ) => {
-  if (!config.availabilityTopic) {
+  if (!config.availability_topic) {
     availabilityTopic = "mqtt-blind/available";
-    console.warn("availabilityTopic is empty");
+    console.warn("availability_topic is empty");
   } else {
-    availabilityTopic = config.availabilityTopic;
+    availabilityTopic = config.availability_topic;
   }
   const client = mqtt.connect(
     `mqtt://${config.username}:${config.password}@${config.broker}:${config.port}`,
@@ -25,7 +25,7 @@ const connect = (
   );
 
   client.on("error", (err) => {
-    logger.info(`Mqtt error: ${err.message}`);
+    logger.error(`Mqtt error: ${err.message}`);
   });
 
   client.on("connect", () => {
@@ -44,7 +44,7 @@ const connect = (
   };
 
   const onPublish = (topic: string, payload: string) => {
-    //logger.info(`Sending payload: ${payload} to topic: ${topic}`);
+    logger.info(`Sending payload: ${payload} to topic: ${topic}`);
     client.publish(topic, payload, {
       qos: config.qos,
       retain: config.retain,

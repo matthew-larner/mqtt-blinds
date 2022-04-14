@@ -1,10 +1,10 @@
-import { Handler } from "../contracts";
+import { RollerBlindHandler } from "../contracts";
 
 import * as util from "./utils";
 
 export const commandsHandler =
-  ({ mqttClient, blindRollerClient, hubs, mqttConfig }: Handler) =>
-  (data: Buffer) => {
+  ({ mqttClient, hubs, mqttConfig }: RollerBlindHandler) =>
+  async (data: Buffer) => {
     const message = data.toString().replace(/\s/g, "");
     const bridge_address = message.substring(1, 4);
     const motor_address = message.substring(4, 7);
@@ -14,12 +14,13 @@ export const commandsHandler =
     const { hub, blind } = util.getRoller(hubs, bridge_address, motor_address);
 
     if (!hub || !blind) {
+      // thi means bridge_address and or motor_address is not found in configuration.yml
       throw new Error("Invalid Command");
     }
 
     const unique_id = util.toSnakeCase(blind.name);
     let positionSet: string = "0";
-    switch (action) {
+    switch (action.toLocaleLowerCase()) {
       case "o":
         positionSet = "100";
         break;
@@ -38,5 +39,6 @@ export const commandsHandler =
     const payload = {
       position: positionSet,
     };
+    console.info(`Blind-roller -> Publish: ${topic} : ${payload}`);
     mqttClient.onPublish(topic, JSON.stringify(payload));
   };
