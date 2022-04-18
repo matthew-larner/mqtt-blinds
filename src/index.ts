@@ -39,7 +39,7 @@ export function main() {
 
       // listen blindRoller message per hub address
       blindRollerClient[hub.bridge_address].onMessage(
-        rollerBlindHandler.commandsHandler({
+        rollerBlindHandler.rollerBlindsCommandsHandler({
           mqttClient,
           mqttConfig,
           hubs,
@@ -49,7 +49,7 @@ export function main() {
 
     // listen mqtt messages
     mqttClient.onMessage(
-      homeAssistantHandler.commandsHandler({
+      homeAssistantHandler.homeAssistantCommandsHandler({
         blindRollerClient,
         hubs,
         mqttClient,

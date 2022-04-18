@@ -2,10 +2,11 @@ import { RollerBlindHandler } from "../contracts";
 
 import * as util from "./utils";
 
-export const commandsHandler =
+export const rollerBlindsCommandsHandler =
   ({ mqttClient, hubs, mqttConfig }: RollerBlindHandler) =>
   async (data: Buffer) => {
     const message = data.toString().replace(/\s/g, "");
+
     const bridge_address = message.substring(1, 4);
     const motor_address = message.substring(4, 7);
     const action = message.substring(7, 8);

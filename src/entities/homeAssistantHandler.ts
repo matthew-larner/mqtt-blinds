@@ -1,7 +1,7 @@
 import * as mqtt from "mqtt";
 import * as util from "./utils";
 import { BlindRollerClient, Handler, IBlind, IHub } from "../contracts";
-import { getKeys, getRoller, toSnakeCase } from "./utils";
+import { getKeys, toSnakeCase } from "./utils";
 import * as logger from "../lib/logger/logger";
 
 export const startup =
@@ -30,10 +30,10 @@ export const startup =
               payload = {
                 name: `${name}`,
                 unique_id: blindName,
-                command_topic: `${hub.bridge_address}/${blind.motor_address}/${mqttConfig.topic_prefix}/cover/${blindName}/config`,
-                position_topic: `${hub.bridge_address}/${blind.motor_address}/${mqttConfig.topic_prefix}/${blindName}/position`,
-                set_position_topic: `${hub.bridge_address}/${blind.motor_address}/${mqttConfig.topic_prefix}/${blindName}/position/set`,
-                availability_topic: `${hub.bridge_address}/${blind.motor_address}/${mqttConfig.availability_topic}`,
+                command_topic: `${mqttConfig.topic_prefix}/cover/${blindName}/config`,
+                position_topic: `${mqttConfig.topic_prefix}/${blindName}/position`,
+                set_position_topic: `${mqttConfig.topic_prefix}/${blindName}/position/set`,
+                availability_topic: `${mqttConfig.availability_topic}`,
                 device_class: type == "blind" ? type : "awning",
                 payload_stop: type == "blind" ? null : "stop",
               };
@@ -67,15 +67,12 @@ export const startup =
         blinds.forEach((blind: IBlind) => {
           const { name, motor_address } = blind;
           const blindName = toSnakeCase(name);
-
-          let config_topic = `${hub.bridge_address}/${motor_address}/${mqttConfig.discovery_prefix}/cover/${blindName}/config`;
-          let command_topic = `${hub.bridge_address}/${motor_address}/${mqttConfig.topic_prefix}/${blindName}/set`;
-          let position_topic = `${hub.bridge_address}/${motor_address}/${mqttConfig.topic_prefix}/${blindName}/position`;
-          let set_position_topic = `${hub.bridge_address}/${motor_address}/${mqttConfig.topic_prefix}/${blindName}/position/set`;
-          let availability_topic = `${hub.bridge_address}/${motor_address}/${mqttConfig.availability_topic}`;
+          let command_topic = `${mqttConfig.topic_prefix}/${blindName}/set`;
+          let position_topic = `${mqttConfig.topic_prefix}/${blindName}/position`;
+          let set_position_topic = `${mqttConfig.topic_prefix}/${blindName}/position/set`;
+          let availability_topic = `${mqttConfig.availability_topic}`;
 
           const topics = [
-            config_topic,
             command_topic,
             position_topic,
             set_position_topic,
@@ -99,17 +96,38 @@ export const startup =
     subscribeTopics();
   };
 
-export const commandsHandler =
-  ({ blindRollerClient: allBlindRollerClient, hubs, mqttClient }: Handler) =>
+export const homeAssistantCommandsHandler =
+  ({ blindRollerClient, hubs, mqttClient }: Handler) =>
   async (topic: string, message: Buffer) => {
-    const { payload, address, operation, motor } = getKeys(topic, message);
+    const payload = message.toString().replace(/\s/g, "");
 
-    const blindRollerClient = allBlindRollerClient[address];
-    const { hub, blind } = getRoller(hubs, address, motor);
+    let topicChunk = topic.split("/");
+    let operation = "";
+    let blindsName = topicChunk[1];
+
+    if (
+      topicChunk.length === 3 &&
+      topicChunk[topicChunk.length - 1] === "set"
+    ) {
+      operation = "commandTopic";
+    } else if (
+      topicChunk.length === 4 &&
+      topicChunk[topicChunk.length - 1] === "set"
+    ) {
+      operation = "setPositionTopic";
+    }
+
+    if (blindsName === "available") {
+      return;
+    } else if (blindsName === "cover") {
+      blindsName = topic.split("/")[2];
+    }
+
+    const { hub, blind } = util.getRollerByName(hubs, blindsName);
 
     try {
       switch (operation) {
-        case "set":
+        case "setPositionTopic":
           setPositionTopic(
             hub,
             blind,
@@ -119,7 +137,7 @@ export const commandsHandler =
             mqttClient
           );
           break;
-        case "config":
+        case "commandTopic":
           commandTopic(
             hub,
             blind,
@@ -139,12 +157,14 @@ export const commandsHandler =
 const setPositionTopic = (
   hub: IHub,
   blind: IBlind,
-  blindRollerClient: BlindRollerClient,
+  blindRollerClient: BlindRollerClient[],
   topic: string,
-  payload: string,
+  pload: string,
   mqttClient: any
 ) => {
-  const num = parseInt(payload);
+  const payload = JSON.parse(pload);
+
+  const num = Number(payload);
 
   if (isNaN(num)) {
     return logger.error("not a number");
@@ -154,7 +174,7 @@ const setPositionTopic = (
   // send TCP Command
   const command = `!${hub.bridge_address}${blind.motor_address}m${numberToSet};`;
 
-  blindRollerClient.write(command, (err: any) => {
+  blindRollerClient[hub.bridge_address].write(command, (err: any) => {
     sendMqttMessage(mqttClient, topic, command, numberToSet);
   });
 };
@@ -163,11 +183,13 @@ const setPositionTopic = (
 const commandTopic = (
   hub: IHub,
   blind: IBlind,
-  blindRollerClient: BlindRollerClient,
+  blindRollerClient: BlindRollerClient[],
   topic: string,
-  payload: string,
+  pload: string,
   mqttClient: any
 ) => {
+  const payload = JSON.parse(pload);
+
   const validPayload = ["open", "close", "stop"];
   if (!validPayload.includes(payload)) {
     return logger.error('Only allowed: "open", "close", "stop"');
@@ -176,10 +198,10 @@ const commandTopic = (
   const action = payload === "open" ? "o" : payload === "close" ? "c" : "s";
 
   // send TCP Command
-  const command = `!${hub.bridge_address}${blind.motor_address}${action}`;
+  const command = `!${hub.bridge_address}${blind.motor_address}${action};`;
 
-  blindRollerClient.write(command, (err) => {
-    sendMqttMessage(mqttClient, topic, action);
+  blindRollerClient[hub.bridge_address].write(command, (err: any) => {
+    sendMqttMessage(mqttClient, topic, command, "numberToSet");
   });
 };
 

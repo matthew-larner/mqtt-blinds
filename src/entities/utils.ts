@@ -22,6 +22,15 @@ export const paddedNumber = (number: number, length: number) => {
   return str;
 };
 
+export const getRollerByName = (hubs: IHub[], blindsdName: string) => {
+  const hub = hubs.find((hub) => {
+    return hub.blinds.find((blind) => toSnakeCase(blind.name) === blindsdName);
+  });
+  const blind = hub.blinds[0];
+
+  return { hub, blind };
+};
+
 export const getRoller = (hubs: IHub[], address: string, motor: string) => {
   const hub = hubs.find((hub: IHub) => hub.bridge_address === address);
   const blind = hub.blinds.find(
@@ -33,8 +42,7 @@ export const getRoller = (hubs: IHub[], address: string, motor: string) => {
 
 export const getKeys = (topic: string, message) => {
   const payload = message.toString().replace(/\s/g, "");
-  const address = topic.split("/")[0];
-  const motor = topic.split("/")[1];
+  const blindsName = topic.split("/")[1];
   const operation = topic.split("/")[topic.split("/").length - 1];
-  return { payload, address, motor, operation };
+  return { payload, blindsName, operation };
 };
