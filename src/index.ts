@@ -7,7 +7,7 @@ import * as homeAssistantHandler from "./entities/homeAssistantHandler";
 import * as rollerBlindHandler from "./entities/rollerBlindsHandler";
 import { BlindRollerClient, IHub } from "./contracts";
 
-export function main() {
+export async function main() {
   try {
     // Get and parse configuration
     const config = YAML.parse(
@@ -49,8 +49,9 @@ export function main() {
 
     // listen mqtt messages
     mqttClient.onMessage(
-      homeAssistantHandler.homeAssistantCommandsHandler({
+      await homeAssistantHandler.homeAssistantCommandsHandler({
         blindRollerClient,
+        mqttConfig,
         hubs,
         mqttClient,
       })

@@ -40,9 +40,27 @@ export const getRoller = (hubs: IHub[], address: string, motor: string) => {
   return { hub, blind };
 };
 
-export const getKeys = (topic: string, message) => {
+export const preparePayload = async (topic: string, message) => {
   const payload = message.toString().replace(/\s/g, "");
-  const blindsName = topic.split("/")[1];
-  const operation = topic.split("/")[topic.split("/").length - 1];
-  return { payload, blindsName, operation };
+
+  let topicChunk = topic.split("/");
+  let operation = "";
+  let blindsName = topicChunk[1];
+
+  if (topicChunk.length === 3 && topicChunk[topicChunk.length - 1] === "set") {
+    operation = "commandTopic";
+  } else if (
+    topicChunk.length === 4 &&
+    topicChunk[topicChunk.length - 1] === "set"
+  ) {
+    operation = "setPositionTopic";
+  }
+
+  if (blindsName === "available") {
+    blindsName = null;
+  } else if (blindsName === "cover") {
+    blindsName = topic.split("/")[2];
+  }
+
+  return { payload, operation, blindsName };
 };

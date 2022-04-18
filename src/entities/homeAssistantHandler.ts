@@ -1,7 +1,7 @@
 import * as mqtt from "mqtt";
 import * as util from "./utils";
 import { BlindRollerClient, Handler, IBlind, IHub } from "../contracts";
-import { getKeys, toSnakeCase } from "./utils";
+import { preparePayload, toSnakeCase } from "./utils";
 import * as logger from "../lib/logger/logger";
 
 export const startup =
@@ -97,30 +97,16 @@ export const startup =
   };
 
 export const homeAssistantCommandsHandler =
-  ({ blindRollerClient, hubs, mqttClient }: Handler) =>
+  async ({ blindRollerClient, mqttConfig, hubs, mqttClient }: Handler) =>
   async (topic: string, message: Buffer) => {
-    const payload = message.toString().replace(/\s/g, "");
+    const res = await preparePayload(topic, message);
 
-    let topicChunk = topic.split("/");
-    let operation = "";
-    let blindsName = topicChunk[1];
+    const { payload, operation, blindsName } = res;
 
-    if (
-      topicChunk.length === 3 &&
-      topicChunk[topicChunk.length - 1] === "set"
-    ) {
-      operation = "commandTopic";
-    } else if (
-      topicChunk.length === 4 &&
-      topicChunk[topicChunk.length - 1] === "set"
-    ) {
-      operation = "setPositionTopic";
-    }
+    const _topic = `${mqttConfig.topic_prefix}/${blindsName}/position`;
 
-    if (blindsName === "available") {
+    if (!blindsName) {
       return;
-    } else if (blindsName === "cover") {
-      blindsName = topic.split("/")[2];
     }
 
     const { hub, blind } = util.getRollerByName(hubs, blindsName);
@@ -132,7 +118,7 @@ export const homeAssistantCommandsHandler =
             hub,
             blind,
             blindRollerClient,
-            topic,
+            _topic,
             payload,
             mqttClient
           );
@@ -142,7 +128,7 @@ export const homeAssistantCommandsHandler =
             hub,
             blind,
             blindRollerClient,
-            topic,
+            _topic,
             payload,
             mqttClient
           );
@@ -201,15 +187,16 @@ const commandTopic = (
   const command = `!${hub.bridge_address}${blind.motor_address}${action};`;
 
   blindRollerClient[hub.bridge_address].write(command, (err: any) => {
-    sendMqttMessage(mqttClient, topic, command, "numberToSet");
+    sendMqttMessage(mqttClient, topic, command, action);
   });
 };
 
 // to be use if need to publish a message
 const sendMqttMessage = (
   mqttClient,
-  topic: string,
+  _topic: string,
   action: string,
+  blindName: string,
   position?: string
 ) => {
   let msg: Object;
@@ -221,5 +208,5 @@ const sendMqttMessage = (
 
   const payload = JSON.stringify(msg);
   logger.info("send mqtt subscription topic " + payload);
-  mqttClient.onPublish(topic, payload);
+  mqttClient.onPublish(_topic, payload);
 };

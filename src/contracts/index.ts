@@ -28,6 +28,7 @@ export interface BlindRollerClient {
 
 export interface Handler {
   blindRollerClient: BlindRollerClient[];
+  mqttConfig: any;
   hubs: any;
   mqttClient: MqttClient;
 }
