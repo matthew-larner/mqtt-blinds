@@ -2,9 +2,13 @@ import { RollerBlindHandler } from "../contracts";
 
 import * as util from "./utils";
 
-export const rollerBlindsCommandsHandler =
-  ({ mqttClient, hubs, mqttConfig }: RollerBlindHandler) =>
-  async (data: Buffer) => {
+export const rollerBlindsCommandsHandler = ({
+  mqttClient,
+  blindRollerClient,
+  hubs,
+  mqttConfig,
+}: RollerBlindHandler) => {
+  return async (data: Buffer) => {
     const message = data.toString().replace(/\s/g, "");
 
     const bridge_address = message.substring(1, 4);
@@ -43,3 +47,4 @@ export const rollerBlindsCommandsHandler =
     console.info(`Blind-roller -> Publish: ${topic} : ${payload}`);
     mqttClient.onPublish(topic, JSON.stringify(payload));
   };
+};

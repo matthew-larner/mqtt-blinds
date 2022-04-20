@@ -41,6 +41,7 @@ export async function main() {
       blindRollerClient[hub.bridge_address].onMessage(
         rollerBlindHandler.rollerBlindsCommandsHandler({
           mqttClient,
+          blindRollerClient,
           mqttConfig,
           hubs,
         })

@@ -43,7 +43,7 @@ mqtt:
   discovery: true
   discovery_prefix: homeassistant
   topic_prefix: mqtt-blinds
-  availabilityTopic: mqtt-blinds/available
+  availability_topic: mqtt-blinds/available
 
 # Global TCP Config for Motorised Blind Hub Communication
 tcp:

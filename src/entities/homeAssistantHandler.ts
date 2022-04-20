@@ -33,8 +33,14 @@ export const startup =
                 command_topic: `${mqttConfig.topic_prefix}/cover/${blindName}/config`,
                 position_topic: `${mqttConfig.topic_prefix}/${blindName}/position`,
                 set_position_topic: `${mqttConfig.topic_prefix}/${blindName}/position/set`,
+                schema: "json",
                 availability_topic: `${mqttConfig.availability_topic}`,
                 device_class: type == "blind" ? type : "awning",
+                position_template: "{{value}}",
+                payload_open: "open",
+                payload_close: "close",
+                position_open: 0,
+                position_closed: 100,
                 payload_stop: type == "blind" ? null : "stop",
               };
             } else {
@@ -148,7 +154,9 @@ const setPositionTopic = (
   pload: string,
   mqttClient: any
 ) => {
-  const payload = JSON.parse(pload);
+  const payload = isJsonString(pload)
+    ? JSON.parse(pload.toLowerCase())
+    : pload.toLowerCase();
 
   const num = Number(payload);
 
@@ -165,6 +173,15 @@ const setPositionTopic = (
   });
 };
 
+function isJsonString(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 // prepare and send TCP command for config topic
 const commandTopic = (
   hub: IHub,
@@ -174,7 +191,9 @@ const commandTopic = (
   pload: string,
   mqttClient: any
 ) => {
-  const payload = JSON.parse(pload);
+  const payload = isJsonString(pload)
+    ? JSON.parse(pload.toLowerCase())
+    : pload.toLowerCase();
 
   const validPayload = ["open", "close", "stop"];
   if (!validPayload.includes(payload)) {

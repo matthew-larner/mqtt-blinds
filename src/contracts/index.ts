@@ -35,6 +35,7 @@ export interface Handler {
 
 export interface RollerBlindHandler {
   mqttClient: MqttClient;
+  blindRollerClient: BlindRollerClient[];
   hubs: any;
   mqttConfig: any;
 }
