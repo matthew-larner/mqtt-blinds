@@ -1,6 +1,7 @@
 import { RollerBlindHandler } from "../contracts";
 
 import * as util from "./utils";
+import { prePareAndValidateTopic } from "./utils";
 
 export const rollerBlindsCommandsHandler = ({
   mqttClient,
@@ -10,25 +11,20 @@ export const rollerBlindsCommandsHandler = ({
   return async (data: Buffer) => {
     const message = data.toString().replace(/\s/g, "");
 
-    const parts = message.split("|");
+    const { blindName, position, action } = prePareAndValidateTopic(
+      message,
+      hubs
+    );
 
-    const bridge_address = parts[1];
-    const motor_address = parts[2];
-    const action = parts[3];
-    const position = parts[4];
-
-    //const clean = message.replace(/\|/g, ""); // remove separator
-
-    const { hub, blind } = util.getRoller(hubs, bridge_address, motor_address);
-
-    if (!hub || !blind) {
-      // thi means bridge_address and or motor_address is not found in configuration.yml
-      throw new Error("Invalid Command");
+    if (!blindName) {
+      return console.log(
+        `Can not continue!  bridge_address and motor_address not found! ${message}`
+      );
     }
 
-    const unique_id = util.toSnakeCase(blind.name);
+    const unique_id = blindName;
     let positionSet: string = "0";
-    switch (action.toLocaleLowerCase()) {
+    switch (action) {
       case "o":
         positionSet = "100";
         break;

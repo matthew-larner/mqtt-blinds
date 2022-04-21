@@ -162,12 +162,16 @@ const setPositionTopic = (
 
   if (isNaN(num)) {
     return logger.error("not a number");
+  } else {
+    if (num > 100) {
+      return logger.error("Allowed range 0 to 100");
+    }
   }
   const numberToSet: string = util.paddedNumber(parseInt(payload), 3);
 
   // send TCP Command
 
-  const command = `!|${hub.bridge_address}|${blind.motor_address}|m|${numberToSet}|;`;
+  const command = `!${hub.bridge_address}${blind.motor_address}m${numberToSet};`;
 
   blindRollerClient[hub.bridge_address].write(command, (err: any) => {
     sendMqttMessage(mqttClient, topic, command, numberToSet);
@@ -204,7 +208,7 @@ const commandTopic = (
   const action = payload === "open" ? "o" : payload === "close" ? "c" : "s";
 
   // send TCP Command
-  const command = `!|${hub.bridge_address}|${blind.motor_address}|${action}|;`;
+  const command = `!${hub.bridge_address}${blind.motor_address}${action};`;
 
   blindRollerClient[hub.bridge_address].write(command, (err: any) => {
     sendMqttMessage(mqttClient, topic, command, action);

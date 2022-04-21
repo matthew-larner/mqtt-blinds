@@ -64,3 +64,48 @@ export const preparePayload = async (topic: string, message) => {
 
   return { payload, operation, blindsName };
 };
+
+export const prePareAndValidateTopic = (message: string, hubs: any) => {
+  const blinds = [];
+  for (let i = 0; i < hubs.length; i++) {
+    const bridge_address = hubs[i].bridge_address;
+
+    const res = hubs[i].blinds.map((b) => {
+      return {
+        address: `${bridge_address}${b.motor_address}`,
+        name: toSnakeCase(b.name),
+      };
+    });
+
+    blinds.push(...res);
+  }
+
+  let cleanTopic = message.replace(/[,;! ]+/g, "").trim(); // clean
+
+  // check if command topic or set position topic
+  // get last string
+  const ls = cleanTopic[cleanTopic.length - 1];
+
+  let keyword = "";
+  let position: any = 0;
+  let action = ls;
+  if (isNaN(Number(ls))) {
+    // for command topic.  strip last string to be use as keyword
+
+    keyword = cleanTopic.slice(0, -1);
+  } else {
+    //set position topic, trip last 4 string to be use as keyword
+    action = "m";
+    keyword = cleanTopic.slice(0, -4);
+    position = cleanTopic.slice(-3);
+  }
+
+  let blind = blinds.find((item) => item.address === keyword);
+  let blindName = blind?.name;
+
+  cleanTopic = `!${cleanTopic};`; // return required character that temporary removed
+
+  // get bridge_address and motor_address
+
+  return { blindName, position, action };
+};
