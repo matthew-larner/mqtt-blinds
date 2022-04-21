@@ -4,7 +4,8 @@
     "module": "commonjs",
     "allowJs": true,
     "outDir": "./dist",
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "types": ["node"]
   },
   "include": ["./src/**/*"]
 }
