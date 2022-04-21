@@ -4,17 +4,20 @@ import * as util from "./utils";
 
 export const rollerBlindsCommandsHandler = ({
   mqttClient,
-  blindRollerClient,
   hubs,
   mqttConfig,
 }: RollerBlindHandler) => {
   return async (data: Buffer) => {
     const message = data.toString().replace(/\s/g, "");
 
-    const bridge_address = message.substring(1, 4);
-    const motor_address = message.substring(4, 7);
-    const action = message.substring(7, 8);
-    const position = message.substring(8, 11);
+    const parts = message.split("|");
+
+    const bridge_address = parts[1];
+    const motor_address = parts[2];
+    const action = parts[3];
+    const position = parts[4];
+
+    //const clean = message.replace(/\|/g, ""); // remove separator
 
     const { hub, blind } = util.getRoller(hubs, bridge_address, motor_address);
 
