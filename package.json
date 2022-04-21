@@ -1,9 +1,9 @@
 {
-  "name": "philips-dynalite-mqtt",
+  "name": "mqtt-roller-blinds",
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com:matthew-larner/philips-dynalite-mqtt.git"
+    "url": "git+https://github.com/matthew-larner/mqtt-blinds.git"
   },
   "private": true,
   "main": "./dist/index.js",
@@ -14,10 +14,10 @@
     "build": "./node_modules/typescript/bin/tsc -p ./tsconfig.json"
   },
   "dependencies": {
+    "@types/node": "^13.9.1",
     "if-env": "^1.0.4",
     "mqtt": "^4.2.6",
-    "sqlite3": "^5.0.2",
-    "ts-node": "^10.4.0",
+    "sqlite3": "^4.2.0",
     "typescript": "^3.8.3",
     "yaml": "^1.10.0"
   },
@@ -25,37 +25,5 @@
     "@types/mqtt": "^2.5.0",
     "@types/yaml": "^1.9.7",
     "tsc-watch": "^4.2.8"
-  },
-  "nyc": {
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "include": [
-      "src/**/*"
-    ],
-    "exclude": [
-      "**/configs/*.ts",
-      "**/data/*.ts",
-      "**/*.d.ts",
-      "**/enums/**/*.ts",
-      "**/models/**/*.ts",
-      "**/entities/**/*.ts",
-      "**/repositories/**/*.ts",
-      "**/lib/secrets/*.ts",
-      "**/lib/db/*.ts",
-      "**/lib/utils/*.ts"
-    ],
-    "reporter": [
-      "text"
-    ],
-    "all": true,
-    "check-coverage": true,
-    "branches": 90,
-    "lines": 90,
-    "functions": 90,
-    "statements": 90
   }
 }
