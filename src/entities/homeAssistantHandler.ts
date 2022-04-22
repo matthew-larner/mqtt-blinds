@@ -30,7 +30,7 @@ export const startup =
               payload = {
                 name: `${name}`,
                 unique_id: blindName,
-                command_topic: `${mqttConfig.topic_prefix}/cover/${blindName}/config`,
+                command_topic: `${mqttConfig.topic_prefix}/cover/${blindName}/set`,
                 position_topic: `${mqttConfig.topic_prefix}/${blindName}/position`,
                 set_position_topic: `${mqttConfig.topic_prefix}/${blindName}/position/set`,
                 schema: "json",
