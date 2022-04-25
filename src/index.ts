@@ -32,18 +32,18 @@ export async function main() {
 
     // connect to all hub ip ports
     hubs.forEach((hub: IHub, i) => {
-      if (hub.type === "udp") {
-        const udpClient = udp(hub.host, hub.port);
+      if (hub.protocol.toLowerCase() === "udp") {
+        udpClient[hub.bridge_address] = udp(hub.host, hub.port);
 
         // listen blindRoller message per hub address
-        udpClient.onMessage(
+        udpClient[hub.bridge_address].onMessage(
           udpRollerBlindHandler.udpRollerBlindsCommandsHandler({
             mqttClient,
             mqttConfig,
             hubs,
           })
         );
-      } else {
+      } else if (hub.protocol.toLowerCase() === "tcp") {
         blindRollerClient[hub.bridge_address] = rollerBlind(
           hub.host,
           hub.port,
@@ -59,6 +59,8 @@ export async function main() {
             hubs,
           })
         );
+      } else {
+        console.error("Protocol not recognize!.");
       }
     });
 
@@ -69,6 +71,7 @@ export async function main() {
         mqttConfig,
         hubs,
         mqttClient,
+        udpClient,
       })
     );
   } catch (error) {

@@ -40,12 +40,29 @@ export const getRoller = (hubs: IHub[], address: string, motor: string) => {
   return { hub, blind };
 };
 
-export const preparePayload = async (topic: string, message) => {
+export const preparePayload = async (topic: string, message, hubs) => {
+  const blinds = [];
+  for (let i = 0; i < hubs.length; i++) {
+    const bridge_address = hubs[i].bridge_address;
+
+    const res = hubs[i].blinds.map((b) => {
+      return {
+        protocol: hubs[i].protocol,
+        address: `${bridge_address}${b.motor_address}`,
+        name: toSnakeCase(b.name),
+      };
+    });
+
+    blinds.push(...res);
+  }
+
   const payload = message.toString().replace(/\s/g, "");
 
   let topicChunk = topic.split("/");
   let operation = "";
   let blindsName = topicChunk[1];
+
+  let protocol = blinds.find((item) => item.name === `${blindsName}`)?.protocol;
 
   if (topicChunk.length === 3 && topicChunk[topicChunk.length - 1] === "set") {
     operation = "commandTopic";
@@ -62,7 +79,7 @@ export const preparePayload = async (topic: string, message) => {
     blindsName = topic.split("/")[2];
   }
 
-  return { payload, operation, blindsName };
+  return { payload, operation, blindsName, protocol };
 };
 
 export const prePareAndValidateTopic = (message: string, hubs: any) => {

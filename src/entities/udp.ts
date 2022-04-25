@@ -3,11 +3,11 @@ const connect = (host: string, port: number) => {
 
   var client = dgram.createSocket("udp4");
 
-  const onPublish = (topic: string, payload: string) => {
+  const send = (topic: string, payload: string) => {
     const buff = new Buffer(topic);
     client.send(buff, payload, buff.length, port, host, function (err, bytes) {
       if (err) throw err;
-      console.log(`UDP client message sent to -> ${topic} : ${port}`);
+      console.info(`UDP client message sent to -> ${topic} : ${port}`);
     });
   };
 
@@ -15,7 +15,7 @@ const connect = (host: string, port: number) => {
     client.on("data", callback);
   };
 
-  return { onMessage, onPublish };
+  return { onMessage, send };
 };
 
 export default connect;

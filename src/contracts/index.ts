@@ -10,6 +10,7 @@ export interface IHub {
   host: string;
   port: number;
   type: string;
+  protocol: string;
   bridge_address: string;
   blinds: IBlind[];
   reconnectTime?: number;
@@ -26,11 +27,17 @@ export interface BlindRollerClient {
   write: (data: any, cb?: (error?: Error) => void) => void;
 }
 
+export interface UdpClient {
+  onMessage: (callback: (data: Buffer) => void) => void;
+  send: (data: any, cb?: (error?: Error) => void) => void;
+}
+
 export interface Handler {
   blindRollerClient: BlindRollerClient[];
   mqttConfig: any;
   hubs: any;
   mqttClient: MqttClient;
+  udpClient: UdpClient[];
 }
 
 export interface RollerBlindHandler {

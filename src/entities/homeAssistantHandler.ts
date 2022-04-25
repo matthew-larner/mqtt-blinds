@@ -1,6 +1,12 @@
 import * as mqtt from "mqtt";
 import * as util from "./utils";
-import { BlindRollerClient, Handler, IBlind, IHub } from "../contracts";
+import {
+  BlindRollerClient,
+  Handler,
+  IBlind,
+  IHub,
+  UdpClient,
+} from "../contracts";
 import { preparePayload, toSnakeCase } from "./utils";
 import * as logger from "../lib/logger/logger";
 
@@ -103,11 +109,17 @@ export const startup =
   };
 
 export const homeAssistantCommandsHandler =
-  async ({ blindRollerClient, mqttConfig, hubs, mqttClient }: Handler) =>
+  async ({
+    blindRollerClient,
+    mqttConfig,
+    hubs,
+    mqttClient,
+    udpClient,
+  }: Handler) =>
   async (topic: string, message: Buffer) => {
-    const res = await preparePayload(topic, message);
+    const res = await preparePayload(topic, message, hubs);
 
-    const { payload, operation, blindsName } = res;
+    const { payload, operation, blindsName, protocol } = res;
 
     const _topic = `${mqttConfig.topic_prefix}/${blindsName}/position`;
 
@@ -126,7 +138,9 @@ export const homeAssistantCommandsHandler =
             blindRollerClient,
             _topic,
             payload,
-            mqttClient
+            mqttClient,
+            protocol,
+            udpClient
           );
           break;
         case "commandTopic":
@@ -136,7 +150,9 @@ export const homeAssistantCommandsHandler =
             blindRollerClient,
             _topic,
             payload,
-            mqttClient
+            mqttClient,
+            protocol,
+            udpClient
           );
           break;
       }
@@ -152,7 +168,9 @@ const setPositionTopic = (
   blindRollerClient: BlindRollerClient[],
   topic: string,
   pload: string,
-  mqttClient: any
+  mqttClient: any,
+  protocol: string,
+  udpClient: UdpClient[]
 ) => {
   const payload = isJsonString(pload)
     ? JSON.parse(pload.toLowerCase())
@@ -161,9 +179,9 @@ const setPositionTopic = (
   const num = Number(payload);
 
   if (isNaN(num) || typeof payload == "string") {
-    return logger.error("not a number");
+    return logger.error("not a number!");
   } else {
-    if (num > 100 && num < 0) {
+    if (num > 100 || num < 0) {
       return logger.error("Allowed range 0 to 100");
     }
   }
@@ -173,9 +191,15 @@ const setPositionTopic = (
 
   const command = `!${hub.bridge_address}${blind.motor_address}m${numberToSet};`;
 
-  blindRollerClient[hub.bridge_address].write(command, (err: any) => {
-    sendMqttMessage(mqttClient, topic, command, numberToSet);
-  });
+  if (protocol.toLowerCase() === "udp") {
+    udpClient[hub.bridge_address].send(command, (err: any) => {
+      sendMqttMessage(mqttClient, topic, command, numberToSet);
+    });
+  } else {
+    blindRollerClient[hub.bridge_address].write(command, (err: any) => {
+      sendMqttMessage(mqttClient, topic, command, numberToSet);
+    });
+  }
 };
 
 function isJsonString(str) {
@@ -194,7 +218,9 @@ const commandTopic = (
   blindRollerClient: BlindRollerClient[],
   topic: string,
   pload: string,
-  mqttClient: any
+  mqttClient: any,
+  protocol: string,
+  udpClient: UdpClient[]
 ) => {
   const payload = isJsonString(pload)
     ? JSON.parse(pload.toLowerCase())
@@ -210,9 +236,15 @@ const commandTopic = (
   // send TCP Command
   const command = `!${hub.bridge_address}${blind.motor_address}${action};`;
 
-  blindRollerClient[hub.bridge_address].write(command, (err: any) => {
-    sendMqttMessage(mqttClient, topic, command, action);
-  });
+  if (protocol.toLowerCase() === "udp") {
+    udpClient[hub.bridge_address].send(command, (err: any) => {
+      sendMqttMessage(mqttClient, topic, command, action);
+    });
+  } else {
+    blindRollerClient[hub.bridge_address].write(command, (err: any) => {
+      sendMqttMessage(mqttClient, topic, command, action);
+    });
+  }
 };
 
 // to be use if need to publish a message
