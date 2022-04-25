@@ -160,10 +160,10 @@ const setPositionTopic = (
 
   const num = Number(payload);
 
-  if (isNaN(num)) {
+  if (isNaN(num) || typeof payload == "string") {
     return logger.error("not a number");
   } else {
-    if (num > 100) {
+    if (num > 100 && num < 0) {
       return logger.error("Allowed range 0 to 100");
     }
   }

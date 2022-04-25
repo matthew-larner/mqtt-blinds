@@ -1,15 +1,16 @@
-version: "3.5"
+version: '3'
 services:
-  nodejs:
-    build: .
-    container_name: "mqtt-blinds"
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:2.0.12
     volumes:
-      - ./config:/usr/src/app/config
-      - ./data:/usr/src/app/data
-    networks:
-      - app
-  bash:
-    build: .
-    entrypoint: /bin/sh
-networks:
-  app:
+      - ./data:/mosquitto/data
+      - ./config:/mosquitto/config
+      - ./log:/mosquitto/log
+    ports:
+      - "1883:1883"
+    environment:
+      - TZ=Australia/Perth
+    restart: always
+    privileged: true
+    user: 1000:1000
