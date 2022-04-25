@@ -26,7 +26,7 @@ export const udpRollerBlindsCommandsHandler = ({
     let positionSet: string = "0";
     switch (action) {
       case "o":
-        positionSet = "100";
+        positionSet = "0";
         break;
       case "s":
         positionSet = "50";
@@ -35,15 +35,13 @@ export const udpRollerBlindsCommandsHandler = ({
         positionSet = position;
         break;
       default:
-        positionSet = "0";
+        positionSet = "100";
         break;
     }
 
-    const topic = `${mqttConfig.topic_prefix}/${unique_id}/${positionSet}`;
-    const payload = {
-      position: positionSet,
-    };
+    const topic = `${mqttConfig.topic_prefix}/${unique_id}/position`;
+    const payload = positionSet;
     console.info(`Blind-roller -> Publish: ${topic} : ${payload}`);
-    mqttClient.onPublish(topic, JSON.stringify(payload));
+    mqttClient.onPublish(topic, payload);
   };
 };
