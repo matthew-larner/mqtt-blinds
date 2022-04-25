@@ -26,7 +26,7 @@ export const rollerBlindsCommandsHandler = ({
     let positionSet: string = "0";
     switch (action) {
       case "o":
-        positionSet = "100";
+        positionSet = "0";
         break;
       case "s":
         positionSet = "50";
@@ -35,7 +35,7 @@ export const rollerBlindsCommandsHandler = ({
         positionSet = position;
         break;
       default:
-        positionSet = "0";
+        positionSet = "100";
         break;
     }
 
