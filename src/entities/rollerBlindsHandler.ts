@@ -42,6 +42,6 @@ export const rollerBlindsCommandsHandler = ({
     const topic = `${mqttConfig.topic_prefix}/${unique_id}/position`;
     const payload = positionSet;
     console.info(`Blind-roller -> Publish: ${topic} : ${payload}`);
-    mqttClient.onPublish(topic, JSON.stringify(payload));
+    mqttClient.onPublish(topic, payload);
   };
 };
