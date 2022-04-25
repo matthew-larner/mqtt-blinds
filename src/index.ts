@@ -3,7 +3,7 @@ import * as fs from "fs";
 import udp from "./entities/udp";
 import mqtt from "./entities/mqtt";
 import rollerBlind from "./entities/rollerBlinds";
-import * as homeAssistantHandler from "./entities/homeAssistantHandler";
+import * as homeAssistantHandler from "./entities/homeAssistant/homeAssistantHandler";
 import * as rollerBlindHandler from "./entities/rollerBlindsHandler";
 import * as udpRollerBlindHandler from "./entities/udpRollerBlindsHandler";
 import { BlindRollerClient, IHub } from "./contracts";
