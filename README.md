@@ -45,8 +45,8 @@ mqtt:
   topic_prefix: mqtt-blinds
   availability_topic: mqtt-blinds/available
 
-# Global TCP Config for Motorised Blind Hub Communication
-tcp:
+# Global Config for Motorised Blind Hub Communication
+hub_communication:
   async: false
   timeout: 10 # seconds
 
@@ -55,6 +55,7 @@ hubs:
   - host: 192.168.20.201
     port: 1487
     type: 'dooya'
+    protocol: udp
     bridge_address: '123'
     blinds:
       - name: 'Bed 1 Roller Blind'
@@ -66,6 +67,7 @@ hubs:
   - host: 192.168.20.202
     port: 1487
     type: 'acmeda'
+    protocol: tcp
     bridge_address: '' # Leave blank for Acmeda
     blinds:
       - name: 'Kitchen Roller Blind'
@@ -82,6 +84,7 @@ hubs:
 - `tcp.timeout`: how long (seconds) to wait before a TCP command times out without getting a response from the hub.
 - `hub.host/port` is the host/port of your blind hub
 - `hub.type` is the brand of the blind hub. `acmeda` and `dooya` are supported.
+- `hub.protocol` is the protocol to use when communication with the hub. Either `tcp` or `udp`.
 - `hub.bridge_address` is the address of the blind hub. You can get this by polling your motorised blind hub/API.
 - `blinds.name`: The name to be displayed in Home Assistant
 - `blinds.type` is either: `blind` (a motorised roller blind), `curtain` (a motorised curtain or awning)
