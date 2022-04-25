@@ -35,7 +35,7 @@ export async function main() {
       if (hub.protocol.toLowerCase() === "udp") {
         udpClient[hub.bridge_address] = udp(hub.host, hub.port);
 
-        // listen blindRoller message per hub address
+        // listen for UDP Client
         udpClient[hub.bridge_address].onMessage(
           udpRollerBlindHandler.udpRollerBlindsCommandsHandler({
             mqttClient,
@@ -51,7 +51,7 @@ export async function main() {
           hub.autoReconnectTime
         );
 
-        // listen blindRoller message per hub address
+        // listen UCP Client
         blindRollerClient[hub.bridge_address].onMessage(
           rollerBlindHandler.rollerBlindsCommandsHandler({
             mqttClient,

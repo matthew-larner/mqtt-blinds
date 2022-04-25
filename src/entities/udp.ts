@@ -1,7 +1,12 @@
 const connect = (host: string, port: number) => {
-  var dgram = require("dgram");
+  const dgram = require("dgram");
 
   var client = dgram.createSocket("udp4");
+
+  client.on("error", (err) => {
+    console.log(`server error:\n${err.stack}`);
+    client.close();
+  });
 
   const send = (topic: string, payload: string) => {
     const buff = new Buffer(topic);
