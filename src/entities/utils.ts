@@ -26,7 +26,10 @@ export const getRollerByName = (hubs: IHub[], blindsdName: string) => {
   const hub = hubs.find((hub) => {
     return hub.blinds.find((blind) => toSnakeCase(blind.name) === blindsdName);
   });
-  const blind = hub.blinds[0];
+
+  const blind = hub.blinds.find(
+    (item: any) => toSnakeCase(item.name) == blindsdName
+  );
 
   return { hub, blind };
 };

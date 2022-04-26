@@ -3,10 +3,14 @@ const connect = (host: string, port: number) => {
 
   var client = dgram.createSocket("udp4");
 
-  client.connect(port, host);
-
-  client.on("connect", function () {
-    console.info("UDP is connected");
+  // Since UDP Don't have state. it's better to initiate connection this way.
+  var data = Buffer.from("Client connected ...");
+  client.send(data, port, host, function (error) {
+    if (error) {
+      client.close();
+    } else {
+      console.info("Established Connection to UDP Server.");
+    }
   });
 
   client.on("error", (err) => {
@@ -16,7 +20,7 @@ const connect = (host: string, port: number) => {
 
   const send = (topic: string, payload: string) => {
     const buff = Buffer.from(topic, "utf-8");
-    client.send(buff, payload, buff.length, function (err, bytes) {
+    client.send(buff, payload, buff.length, port, host, function (err, bytes) {
       if (err) throw err;
       console.info(`UDP client message sent to -> ${topic} : ${port}`);
     });
