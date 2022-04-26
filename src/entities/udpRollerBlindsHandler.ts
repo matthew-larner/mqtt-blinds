@@ -41,7 +41,7 @@ export const udpRollerBlindsCommandsHandler = ({
 
     const topic = `${mqttConfig.topic_prefix}/${unique_id}/position`;
     const payload = positionSet;
-    console.info(`Blind-roller -> Publish: ${topic} : ${payload}`);
+    console.info(`UDP Blind-roller -> Publish: ${topic} : ${payload}`);
     mqttClient.onPublish(topic, payload);
   };
 };

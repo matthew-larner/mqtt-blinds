@@ -60,9 +60,7 @@ export async function main() {
           })
         );
       } else {
-        console.error(
-          `${hub.protocol} Protocol not recognize!. - - - - - - - - - - - `
-        );
+        console.error(`${hub.protocol} Protocol not recognize!.`);
       }
     });
 

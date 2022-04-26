@@ -23,7 +23,7 @@ const connect = (host: string, port: number) => {
   };
 
   const onMessage = (callback: (data: Buffer) => void) => {
-    client.on("data", callback);
+    client.on("message", callback);
   };
 
   return { onMessage, send };
