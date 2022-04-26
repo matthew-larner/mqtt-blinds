@@ -4,12 +4,12 @@ const connect = (host: string, port: number) => {
   var client = dgram.createSocket("udp4");
 
   client.on("error", (err) => {
-    console.log(`server error:\n${err.stack}`);
+    console.error(`server error:\n${err.stack}`);
     client.close();
   });
 
   const send = (topic: string, payload: string) => {
-    const buff = new Buffer(topic);
+    const buff = Buffer.from(topic, "utf-8");
     client.send(buff, payload, buff.length, port, host, function (err, bytes) {
       if (err) throw err;
       console.info(`UDP client message sent to -> ${topic} : ${port}`);

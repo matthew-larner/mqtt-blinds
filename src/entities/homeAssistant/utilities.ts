@@ -19,7 +19,7 @@ const sendMqttMessage = (
   };
 
   const payload = JSON.stringify(msg);
-  logger.info("send mqtt subscription topic " + payload);
+  logger.info("********* send mqtt subscription topic " + payload);
   mqttClient.onPublish(_topic, payload);
 };
 
@@ -33,7 +33,7 @@ function isJsonString(str) {
 }
 
 // prepare and send TCP command for config topic
-export const commandTopic = (
+export const commandTopic = async (
   hub: IHub,
   blind: IBlind,
   blindRollerClient: BlindRollerClient[],
@@ -58,17 +58,25 @@ export const commandTopic = (
   const command = `!${hub.bridge_address}${blind.motor_address}${action};`;
 
   if (protocol.toLowerCase() === "udp") {
-    udpClient[hub.bridge_address].send(command, (err: any) => {
+    try {
+      await udpClient[hub.bridge_address].send(command);
       sendMqttMessage(mqttClient, topic, command, action);
-    });
+    } catch (error) {
+      console.error("UDP Send Error:", error);
+    }
+  } else if (protocol.toLowerCase() === "tcp") {
+    try {
+      blindRollerClient[hub.bridge_address].write(command);
+      sendMqttMessage(mqttClient, topic, command, action);
+    } catch (error) {
+      console.error("TCP Send Error:", error);
+    }
   } else {
-    blindRollerClient[hub.bridge_address].write(command, (err: any) => {
-      sendMqttMessage(mqttClient, topic, command, action);
-    });
+    console.error(`${protocol} is not supported!`);
   }
 };
 
-export const setPositionTopic = (
+export const setPositionTopic = async (
   hub: IHub,
   blind: IBlind,
   blindRollerClient: BlindRollerClient[],
@@ -98,12 +106,20 @@ export const setPositionTopic = (
   const command = `!${hub.bridge_address}${blind.motor_address}m${numberToSet};`;
 
   if (protocol.toLowerCase() === "udp") {
-    udpClient[hub.bridge_address].send(command, (err: any) => {
+    try {
+      await udpClient[hub.bridge_address].send(command);
       sendMqttMessage(mqttClient, topic, command, numberToSet);
-    });
+    } catch (error) {
+      console.error("UDP Send Error:", error);
+    }
+  } else if (protocol.toLowerCase() === "tcp") {
+    try {
+      await blindRollerClient[hub.bridge_address].write(command);
+      sendMqttMessage(mqttClient, topic, command, numberToSet);
+    } catch (error) {
+      console.error("TCP Send Error:", error);
+    }
   } else {
-    blindRollerClient[hub.bridge_address].write(command, (err: any) => {
-      sendMqttMessage(mqttClient, topic, command, numberToSet);
-    });
+    console.error(`${protocol} is not supported!`);
   }
 };
