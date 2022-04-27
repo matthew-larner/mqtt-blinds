@@ -25,7 +25,7 @@ export const startup =
           const { blinds } = hub;
 
           blinds.forEach((blind: IBlind) => {
-            const { type, name } = blind;
+            const { type, name, reverse_direction } = blind;
             const blindName = toSnakeCase(name);
 
             let payload: object;
@@ -44,10 +44,10 @@ export const startup =
                 availability_topic: `${mqttConfig.availability_topic}`,
                 device_class: type == "blind" ? type : "awning",
                 position_template: "{{value}}",
-                payload_open: "open",
-                payload_close: "close",
-                position_open: 0,
-                position_closed: 100,
+                payload_open: reverse_direction ? "close" : "open",
+                payload_close: reverse_direction ? "open" : "close",
+                position_open: reverse_direction ? 100 : 0,
+                position_closed: reverse_direction ? 0 : 100,
                 payload_stop: type == "blind" ? null : "stop",
               };
             } else {

@@ -4,6 +4,7 @@ export interface IBlind {
   name: string;
   type: string;
   motor_address: string;
+  reverse_direction: boolean;
 }
 
 export interface IHub {
