@@ -133,7 +133,7 @@ export const homeAssistantCommandsHandler =
     try {
       switch (operation) {
         case "setPositionTopic":
-          setPositionTopic(
+          await setPositionTopic(
             hub,
             blind,
             blindRollerClient,
@@ -145,7 +145,7 @@ export const homeAssistantCommandsHandler =
           );
           break;
         case "commandTopic":
-          commandTopic(
+          await commandTopic(
             hub,
             blind,
             blindRollerClient,
@@ -160,4 +160,51 @@ export const homeAssistantCommandsHandler =
     } catch (error) {
       console.error("Home assistant commandHandler error:", error);
     }
+  };
+
+export const syncHomeAssistantCommandsHandler =
+  ({ blindRollerClient, mqttConfig, hubs, mqttClient, udpClient }: Handler) =>
+  (topic: string, message: Buffer) => {
+    preparePayload(topic, message, hubs).then((res: any) => {
+      const { payload, operation, blindsName, protocol } = res;
+
+      const _topic = `${mqttConfig.topic_prefix}/${blindsName}/position`;
+
+      if (!blindsName) {
+        return;
+      }
+
+      const { hub, blind } = util.getRollerByName(hubs, blindsName);
+
+      try {
+        switch (operation) {
+          case "setPositionTopic":
+            setPositionTopic(
+              hub,
+              blind,
+              blindRollerClient,
+              _topic,
+              payload,
+              mqttClient,
+              protocol,
+              udpClient
+            );
+            break;
+          case "commandTopic":
+            commandTopic(
+              hub,
+              blind,
+              blindRollerClient,
+              _topic,
+              payload,
+              mqttClient,
+              protocol,
+              udpClient
+            );
+            break;
+        }
+      } catch (error) {
+        console.error("Home assistant commandHandler error:", error);
+      }
+    });
   };

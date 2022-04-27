@@ -15,7 +15,7 @@ export async function main() {
       fs.readFileSync("./config/configuration.yml", "utf8")
     );
 
-    const { mqtt: mqttConfig, hubs } = config;
+    const { mqtt: mqttConfig, hubs, hub_communication } = config;
 
     if (!mqttConfig.discovery) {
       throw new Error("MQTT Discovery is set to false: cannot go any further");
@@ -64,16 +64,27 @@ export async function main() {
       }
     });
 
-    // listen mqtt messages
-    mqttClient.onMessage(
-      await homeAssistantHandler.homeAssistantCommandsHandler({
-        blindRollerClient,
-        mqttConfig,
-        hubs,
-        mqttClient,
-        udpClient,
-      })
-    );
+    if (hub_communication.async) {
+      mqttClient.onMessage(
+        await homeAssistantHandler.homeAssistantCommandsHandler({
+          blindRollerClient,
+          mqttConfig,
+          hubs,
+          mqttClient,
+          udpClient,
+        })
+      );
+    } else {
+      mqttClient.onMessage(
+        homeAssistantHandler.syncHomeAssistantCommandsHandler({
+          blindRollerClient,
+          mqttConfig,
+          hubs,
+          mqttClient,
+          udpClient,
+        })
+      );
+    }
   } catch (error) {
     console.error(error.message);
     process.exit(1);
