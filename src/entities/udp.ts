@@ -9,7 +9,7 @@ const connect = (host: string, port: number) => {
     if (error) {
       client.close();
     } else {
-      console.info("Established Connection to UDP Server.");
+      console.info("ClientConnected.");
     }
   });
 
