@@ -61,9 +61,11 @@ hubs:
       - name: 'Bed 1 Roller Blind'
         type: 'blind'
         motor_address: 'D001'
+        reverse_direction: false
       - name: 'Bed 1 Curtain'
         type: 'curtain'
         motor_address: 'D002'
+        reverse_direction: true
   - host: 192.168.20.202
     port: 1487
     type: 'acmeda'
@@ -73,9 +75,11 @@ hubs:
       - name: 'Kitchen Roller Blind'
         type: 'blind'
         motor_address: 'L40'
+        reverse_direction: false
       - name: 'Bed 4 Curtain'
         type: 'curtain'
         motor_address: '53T'
+        reverse_direction: true
 ```
 
 **Where:**
@@ -89,3 +93,4 @@ hubs:
 - `blinds.name`: The name to be displayed in Home Assistant
 - `blinds.type` is either: `blind` (a motorised roller blind), `curtain` (a motorised curtain or awning)
 - `blinds.motor_address`: The address of the motor. You can get this by polling your motorised blind hub/API
+- `blinds.reverse_direction`: If `true`, reverse the direction of up/open and down/closed.
