@@ -1,7 +1,7 @@
 import * as net from "net";
 import * as logger from "../lib/logger/logger";
 
-const connect = (
+const connect = async (
   host: string,
   port: number,
   reconnectSeconds: number = 15,
@@ -44,8 +44,8 @@ const connect = (
 
   client.connect(port, host);
 
-  const onMessage = (callback: (data: Buffer) => void) => {
-    client.on("data", callback);
+  const onMessage = async (callback: (data: Buffer) => void) => {
+    await client.on("data", callback);
   };
 
   const write = (data: string, cb?: (error?: Error) => void) => {

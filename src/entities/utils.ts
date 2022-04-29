@@ -22,13 +22,13 @@ export const paddedNumber = (number: number, length: number) => {
   return str;
 };
 
-export const getRollerByName = (hubs: IHub[], blindsdName: string) => {
+export const getRollerByName = (hubs: IHub[], blindName: string) => {
   const hub = hubs.find((hub) => {
-    return hub.blinds.find((blind) => toSnakeCase(blind.name) === blindsdName);
+    return hub.blinds.find((blind) => toSnakeCase(blind.name) === blindName);
   });
 
   const blind = hub.blinds.find(
-    (item: any) => toSnakeCase(item.name) == blindsdName
+    (item: any) => toSnakeCase(item.name) == blindName
   );
 
   return { hub, blind };

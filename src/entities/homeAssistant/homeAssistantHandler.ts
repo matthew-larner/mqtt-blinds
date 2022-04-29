@@ -1,16 +1,11 @@
 import * as mqtt from "mqtt";
 import * as util from "../utils";
-import {
-  BlindRollerClient,
-  Handler,
-  IBlind,
-  IHub,
-  UdpClient,
-} from "../../contracts";
+import { Handler, IBlind, IHub } from "../../contracts";
 import { preparePayload, toSnakeCase } from "../utils";
 import * as logger from "../../lib/logger/logger";
 import { commandTopic, setPositionTopic } from "./utilities";
-
+import Queue from "../../lib/queue";
+const topicQueue = new Queue();
 export const startup =
   ({ mqttConfig, hubs }) =>
   (client: mqtt.MqttClient) => {
@@ -116,50 +111,86 @@ export const homeAssistantCommandsHandler =
     hubs,
     mqttClient,
     udpClient,
+    hub_communication,
   }: Handler) =>
   async (topic: string, message: Buffer) => {
     const res = await preparePayload(topic, message, hubs);
 
     const { payload, operation, blindsName, protocol } = res;
+    const { async, timeout: _timeout } = hub_communication;
+    const timeout = _timeout * 1000;
 
     const _topic = `${mqttConfig.topic_prefix}/${blindsName}/position`;
 
-    if (!blindsName) {
-      return;
-    }
+    let allTopic = [];
+    let next = false;
 
-    const { hub, blind } = util.getRollerByName(hubs, blindsName);
-
-    try {
-      switch (operation) {
-        case "setPositionTopic":
-          await setPositionTopic(
-            hub,
-            blind,
-            blindRollerClient,
-            _topic,
-            payload,
-            mqttClient,
-            protocol,
-            udpClient
-          );
-          break;
-        case "commandTopic":
-          await commandTopic(
-            hub,
-            blind,
-            blindRollerClient,
-            _topic,
-            payload,
-            mqttClient,
-            protocol,
-            udpClient
-          );
-          break;
+    // waiting time for queuing is the timeout time
+    do {
+      if (_topic !== "mqtt-blinds/null/position") {
+        console.info(`-> Enqueue : ${_topic} : ${payload}`);
+        await topicQueue.topicOnQueue({
+          payload,
+          operation,
+          blindsName,
+          protocol,
+        });
       }
-    } catch (error) {
-      console.error("Home assistant commandHandler error:", error);
-    }
+      if (async) await stall(timeout);
+      next = true;
+    } while (!next);
+    next = false;
+    allTopic = await topicQueue.getTopicsQueue();
+    await topicQueue.clearQueue();
+
+    const runProcess = async (topic) => {
+      const { payload, operation, blindsName, protocol } = topic;
+      if (!blindsName) {
+        return;
+      }
+
+      const { hub, blind } = util.getRollerByName(hubs, blindsName);
+
+      try {
+        switch (operation) {
+          case "setPositionTopic":
+            await setPositionTopic(
+              hub,
+              blind,
+              blindRollerClient,
+              topic,
+              payload,
+              mqttClient,
+              protocol,
+              udpClient
+            );
+            break;
+          case "commandTopic":
+            await commandTopic(
+              hub,
+              blind,
+              blindRollerClient,
+              topic,
+              payload,
+              mqttClient,
+              protocol,
+              udpClient
+            );
+            break;
+        }
+      } catch (error) {
+        console.error("Home assistant commandHandler error:", error);
+      }
+    };
+
+    (async () => {
+      for (let i = 0; i < allTopic.length; i++) {
+        await runProcess(allTopic[i]);
+        if (async) await stall(timeout);
+      }
+    })();
+
+    return;
   };
 
 export const syncHomeAssistantCommandsHandler =
@@ -208,3 +239,7 @@ export const syncHomeAssistantCommandsHandler =
       }
     });
   };
+
+async function stall(stallTime = 3000) {
+  await new Promise((resolve) => setTimeout(resolve, stallTime));
+}

@@ -33,12 +33,18 @@ export interface UdpClient {
   send: (data: any, cb?: (error?: Error) => void) => void;
 }
 
+export interface IHub_communication {
+  async: boolean;
+  timeout: number;
+}
+
 export interface Handler {
   blindRollerClient: BlindRollerClient[];
   mqttConfig: any;
   hubs: any;
   mqttClient: MqttClient;
   udpClient: UdpClient[];
+  hub_communication: IHub_communication;
 }
 
 export interface RollerBlindHandler {

@@ -31,9 +31,9 @@ export async function main() {
     const udpClient: [] = [];
 
     // connect to all hub ip ports
-    hubs.forEach((hub: IHub, i) => {
+    hubs.forEach(async (hub: IHub, i) => {
       if (hub.protocol.toLowerCase() === "udp") {
-        udpClient[hub.bridge_address] = udp(hub.host, hub.port);
+        udpClient[hub.bridge_address] = await udp(hub.host, hub.port);
 
         // listen for UDP Client
         udpClient[hub.bridge_address].onMessage(
@@ -44,16 +44,16 @@ export async function main() {
           })
         );
       } else if (hub.protocol.toLowerCase() === "tcp") {
-        blindRollerClient[hub.bridge_address] = rollerBlind(
+        blindRollerClient[hub.bridge_address] = await rollerBlind(
           hub.host,
           hub.port,
           hub.reconnectTime,
           hub.autoReconnectTime
         );
 
-        // listen UCP Client
-        blindRollerClient[hub.bridge_address].onMessage(
-          rollerBlindHandler.rollerBlindsCommandsHandler({
+        // listen TCP Client
+        await blindRollerClient[hub.bridge_address].onMessage(
+          await rollerBlindHandler.rollerBlindsCommandsHandler({
             mqttClient,
             mqttConfig,
             hubs,
@@ -64,27 +64,16 @@ export async function main() {
       }
     });
 
-    if (hub_communication.async) {
-      mqttClient.onMessage(
-        await homeAssistantHandler.homeAssistantCommandsHandler({
-          blindRollerClient,
-          mqttConfig,
-          hubs,
-          mqttClient,
-          udpClient,
-        })
-      );
-    } else {
-      mqttClient.onMessage(
-        homeAssistantHandler.syncHomeAssistantCommandsHandler({
-          blindRollerClient,
-          mqttConfig,
-          hubs,
-          mqttClient,
-          udpClient,
-        })
-      );
-    }
+    mqttClient.onMessage(
+      await homeAssistantHandler.homeAssistantCommandsHandler({
+        blindRollerClient,
+        mqttConfig,
+        hubs,
+        mqttClient,
+        udpClient,
+        hub_communication,
+      })
+    );
   } catch (error) {
     console.error(error.message);
     process.exit(1);

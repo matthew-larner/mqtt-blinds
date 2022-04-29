@@ -1,4 +1,4 @@
-const connect = (host: string, port: number) => {
+const connect = async (host: string, port: number) => {
   const dgram = require("dgram");
 
   var client = dgram.createSocket("udp4");

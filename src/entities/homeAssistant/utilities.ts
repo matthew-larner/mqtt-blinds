@@ -38,14 +38,14 @@ export const commandTopic = async (
   blind: IBlind,
   blindRollerClient: BlindRollerClient[],
   topic: string,
-  pload: string,
+  pLoad: string,
   mqttClient: any,
   protocol: string,
   udpClient: UdpClient[]
 ) => {
-  const payload = isJsonString(pload)
-    ? JSON.parse(pload.toLowerCase())
-    : pload.toLowerCase();
+  const payload = isJsonString(pLoad)
+    ? JSON.parse(pLoad.toLowerCase())
+    : pLoad.toLowerCase();
 
   const validPayload = ["open", "close", "stop"];
   if (!validPayload.includes(payload)) {
@@ -56,7 +56,6 @@ export const commandTopic = async (
 
   // send TCP Command
   const command = `!${hub.bridge_address}${blind.motor_address}${action};`;
-
   if (protocol.toLowerCase() === "udp") {
     try {
       await udpClient[hub.bridge_address].send(command);
@@ -81,14 +80,14 @@ export const setPositionTopic = async (
   blind: IBlind,
   blindRollerClient: BlindRollerClient[],
   topic: string,
-  pload: string,
+  pLoad: string,
   mqttClient: any,
   protocol: string,
   udpClient: UdpClient[]
 ) => {
-  const payload = isJsonString(pload)
-    ? JSON.parse(pload.toLowerCase())
-    : pload.toLowerCase();
+  const payload = isJsonString(pLoad)
+    ? JSON.parse(pLoad.toLowerCase())
+    : pLoad.toLowerCase();
 
   const num = Number(payload);
 

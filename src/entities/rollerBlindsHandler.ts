@@ -3,7 +3,7 @@ import { RollerBlindHandler } from "../contracts";
 import * as util from "./utils";
 import { prePareAndValidateTopic } from "./utils";
 
-export const rollerBlindsCommandsHandler = ({
+export const rollerBlindsCommandsHandler = async ({
   mqttClient,
   hubs,
   mqttConfig,
