@@ -14,8 +14,6 @@ export interface IHub {
   protocol: string;
   bridge_address: string;
   blinds: IBlind[];
-  reconnectTime?: number;
-  autoReconnectTime?: number;
 }
 
 export interface MqttClient {

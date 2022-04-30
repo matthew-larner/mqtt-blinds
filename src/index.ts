@@ -46,9 +46,7 @@ export async function main() {
       } else if (hub.protocol.toLowerCase() === "tcp") {
         blindRollerClient[hub.bridge_address] = await rollerBlind(
           hub.host,
-          hub.port,
-          hub.reconnectTime,
-          hub.autoReconnectTime
+          hub.port
         );
 
         // listen TCP Client
