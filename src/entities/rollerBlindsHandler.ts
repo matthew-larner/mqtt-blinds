@@ -1,7 +1,6 @@
 import { RollerBlindHandler } from "../contracts";
-
-import * as util from "./utils";
-import { prePareAndValidateTopic } from "./utils";
+import { RequestIds } from "../lib/Global";
+import { prePareAndValidateTopic } from "../utilities/utils";
 
 export const rollerBlindsCommandsHandler = async ({
   mqttClient,
@@ -10,6 +9,11 @@ export const rollerBlindsCommandsHandler = async ({
 }: RollerBlindHandler) => {
   return async (data: Buffer) => {
     const message = data.toString().replace(/\s/g, "");
+
+    const index = RequestIds.indexOf(message);
+    if (index > -1) {
+      RequestIds.splice(index, 1); // 2nd parameter means remove one item only
+    }
 
     const { blindName, position, action } = prePareAndValidateTopic(
       message,

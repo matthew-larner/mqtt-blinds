@@ -1,7 +1,5 @@
 import { RollerBlindHandler } from "../contracts";
-
-import * as util from "./utils";
-import { prePareAndValidateTopic } from "./utils";
+import { prePareAndValidateTopic } from "../utilities/utils";
 
 export const udpRollerBlindsCommandsHandler = ({
   mqttClient,

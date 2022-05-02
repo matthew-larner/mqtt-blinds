@@ -1,31 +1,26 @@
-import * as YAML from "yaml";
-import * as fs from "fs";
-import udp from "./entities/udp";
-import mqtt from "./entities/mqtt";
-import rollerBlind from "./entities/rollerBlinds";
-import * as homeAssistantHandler from "./entities/homeAssistant/homeAssistantHandler";
 import * as rollerBlindHandler from "./entities/rollerBlindsHandler";
+import rollerBlind from "./entities/rollerBlinds";
 import * as udpRollerBlindHandler from "./entities/udpRollerBlindsHandler";
 import { BlindRollerClient, IHub } from "./contracts";
+import udp from "./entities/udp";
+import { startup } from "./homeAssistants/startup";
+import mqtt from "./entities/mqtt";
+import { homeAssistantCommandsHandler } from "./homeAssistants/homeAssistantHandler";
+import { FileParser } from "./utilities/utils";
 
 export async function main() {
   try {
     // Get and parse configuration
-    const config = YAML.parse(
-      fs.readFileSync("./config/configuration.yml", "utf8")
-    );
-
-    const { mqtt: mqttConfig, hubs, hub_communication } = config;
+    const config = await (await FileParser("./config/config.yml")).readFile();
+    const { sourceFilePath, allowedProtocols } = config || {};
+    const devicesConfig: any = (await FileParser(sourceFilePath)).readFile();
+    const { mqtt: mqttConfig, hubs, hub_communication } = devicesConfig;
 
     if (!mqttConfig.discovery) {
       throw new Error("MQTT Discovery is set to false: cannot go any further");
     }
 
-    // connect to mqtt and prepare subscription
-    const mqttClient = mqtt(
-      mqttConfig,
-      homeAssistantHandler.startup({ mqttConfig, hubs })
-    );
+    const mqttClient = await mqtt(mqttConfig, startup({ mqttConfig, hubs }));
 
     const blindRollerClient: BlindRollerClient[] = [];
     const udpClient: [] = [];
@@ -65,7 +60,7 @@ export async function main() {
     });
 
     mqttClient.onMessage(
-      await homeAssistantHandler.homeAssistantCommandsHandler({
+      await homeAssistantCommandsHandler({
         blindRollerClient,
         mqttConfig,
         hubs,

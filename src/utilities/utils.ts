@@ -1,4 +1,16 @@
+import * as YAML from "yaml";
+import * as fs from "fs";
 import { IHub } from "../contracts";
+import { RequestIds } from "../lib/Global";
+
+export const isJsonString = (str) => {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+};
 
 export const toSnakeCase = (str: string) => {
   const convert = (str: string) =>
@@ -129,3 +141,63 @@ export const prePareAndValidateTopic = (message: string, hubs: any) => {
 
   return { blindName, position, action };
 };
+
+export const queuer = async (
+  func1: Function,
+  func2: Function,
+  tries: number,
+  command: string
+) => {
+  let next = false;
+  let response = false;
+  let tries_ = tries;
+  let tryCount = 0;
+  do {
+    const pendingResponse = RequestIds.indexOf(command) !== -1;
+
+    if (RequestIds.indexOf(command) === -1) {
+      next = true;
+    }
+
+    tries--;
+    tryCount++;
+
+    if (!response) {
+      console.info(`* * * * * Sending request try(${tryCount}) for `, command);
+      response = func1();
+      if (response) {
+        func2;
+      }
+    } else if (!next) {
+      console.log(
+        `* * * * * Waiting reply from server... ${tryCount} for `,
+        command
+      );
+    }
+
+    if (tries <= 0 || next) {
+      const index = RequestIds.indexOf(command);
+      if (index !== -1) {
+        RequestIds.splice(index, 1); // 2nd parameter means remove one item only
+      }
+
+      if (pendingResponse) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+    // once second every retry
+    await stall(1000);
+  } while (!next && RequestIds.length > 0);
+};
+
+export const FileParser = async (fileUrl: string) => {
+  return {
+    readFile: () => YAML.parse(fs.readFileSync(fileUrl, "utf8")),
+  };
+};
+
+async function stall(stallTime = 3000) {
+  await new Promise((resolve) => setTimeout(resolve, stallTime));
+}

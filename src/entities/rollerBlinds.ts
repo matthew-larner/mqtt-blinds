@@ -50,7 +50,7 @@ const connect = async (
 
   const write = (data: string, cb?: (error?: Error) => void) => {
     logger.info(`TCP command to be sent-: ${data}`);
-    client.write(data);
+    return client.write(data);
   };
 
   return {

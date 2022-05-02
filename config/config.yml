@@ -1,0 +1,4 @@
+sourceFilePath: "./config/configuration.yml"
+allowedProtocols:
+  - tcp
+  - udp
