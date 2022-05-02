@@ -155,7 +155,7 @@ export const queuer = async (
   do {
     const pendingResponse = RequestIds.indexOf(command) !== -1;
 
-    if (RequestIds.indexOf(command) === -1) {
+    if (!pendingResponse) {
       next = true;
     }
 
@@ -166,7 +166,7 @@ export const queuer = async (
       console.info(`* * * * * Sending request try(${tryCount}) for `, command);
       response = func1();
       if (response) {
-        func2;
+        func2();
       }
     } else if (!next) {
       console.log(
@@ -183,13 +183,12 @@ export const queuer = async (
 
       if (pendingResponse) {
         return false;
-      } else {
-        return true;
       }
+      return true;
     }
     // once second every retry
     await stall(1000);
-  } while (!next && RequestIds.length > 0);
+  } while (!next);
 };
 
 export const FileParser = async (fileUrl: string) => {
