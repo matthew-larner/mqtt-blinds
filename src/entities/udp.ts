@@ -1,6 +1,7 @@
-const connect = async (host: string, port: number) => {
-  const dgram = require("dgram");
+import * as logger from "../lib/logger/logger";
+import * as dgram from "dgram";
 
+const connect = async (host: string, port: number) => {
   var client = dgram.createSocket("udp4");
 
   // Since UDP Don't have state. it's better to initiate connection this way.
@@ -18,7 +19,12 @@ const connect = async (host: string, port: number) => {
     client.close();
   });
 
-  const send = (topic: string, payload: string) => {
+  client.on("timeout", () => {
+    logger.info(`No UDP communication detected in the  Force reconnecting...`);
+    // timedOut = true;
+    // client.end();
+  });
+  const send = (topic: string, payload: any) => {
     const buff = Buffer.from(topic, "utf-8");
     client.send(buff, payload, buff.length, port, host, function (err, bytes) {
       if (err) throw err;

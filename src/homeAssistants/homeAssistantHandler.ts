@@ -39,9 +39,9 @@ export const homeAssistantCommandsHandler =
           protocol,
         });
       }
-      if (isAsync) await stall(timeout / 2);
+      if (!isAsync) await stall(timeout / 2);
       next = true;
-    } while (!next);
+    } while (!next && !isAsync);
 
     next = false;
 
@@ -49,7 +49,7 @@ export const homeAssistantCommandsHandler =
 
     await topicQueue.clearQueue();
 
-    const runProcess = async (topic) => {
+    const runProcess = async (topic: any) => {
       const { payload, operation, blindsName, protocol } = topic;
       if (!blindsName) {
         return;
@@ -78,7 +78,8 @@ export const homeAssistantCommandsHandler =
 
     if (allTopic.length > 0) {
       for (let i = 0; i < allTopic.length; i++) {
-        await runProcess(allTopic[i]);
+        const response = await runProcess(allTopic[i]);
+        console.log(response);
       }
     }
   };

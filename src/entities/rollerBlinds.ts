@@ -12,7 +12,7 @@ const connect = async (
 
   client.on("connect", () => {
     logger.info("Connected to roller-blind");
-    client.setTimeout(idleSeconds * 1000);
+    client.setTimeout(idleSeconds * 10000);
   });
 
   client.on("close", () => {

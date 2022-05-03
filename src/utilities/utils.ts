@@ -146,12 +146,14 @@ export const queuer = async (
   func1: Function,
   func2: Function,
   tries: number,
-  command: string
+  command: string,
+  isAsync: boolean
 ) => {
-  let next = false;
+  let next = false; //TODO : add async contition here
   let requested = false;
   let tries_ = tries;
   let tryCount = 0;
+
   do {
     const pendingResponse = RequestIds.indexOf(command) !== -1;
 
@@ -187,58 +189,7 @@ export const queuer = async (
     }
     // once second every retry
     await stall(1000);
-  } while (!next);
-};
-
-export const queuer2 = async (
-  func1: Function,
-  func2: Function,
-  tries: number,
-  command: string
-) => {
-  let next = false;
-  let requested = false;
-  let tries_ = tries;
-  let tryCount = 0;
-  do {
-    const pendingResponse = RequestIds.indexOf(command) !== -1;
-
-    if (!pendingResponse) {
-      next = true;
-    }
-
-    tries--;
-    tryCount++;
-
-    if (!requested) {
-      console.info(
-        `* * * * * Sending request try(${tryCount}) for requested `,
-        command
-      );
-      func1();
-      requested = true;
-    } else if (!next) {
-      console.log(
-        `* * * * * Waiting reply from UDP server... ${tryCount} for `,
-        command
-      );
-    }
-
-    if (tries <= 0 || next) {
-      const index = RequestIds.indexOf(command);
-      if (index !== -1) {
-        RequestIds.splice(index, 1); // 2nd parameter means remove one item only
-      }
-
-      if (pendingResponse) {
-        return false;
-      }
-      func2();
-      return true;
-    }
-    // once second every retry
-    await stall(1000);
-  } while (!next);
+  } while (!next && !isAsync);
 };
 
 export const FileParser = async (fileUrl: string) => {

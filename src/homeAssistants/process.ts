@@ -2,12 +2,7 @@ import { IHub, IBlind, BlindRollerClient, UdpClient } from "../contracts";
 import { RequestIds } from "../lib/Global";
 import * as logger from "../lib/logger/logger";
 
-import {
-  isJsonString,
-  paddedNumber,
-  queuer,
-  queuer2,
-} from "../utilities/utils";
+import { isJsonString, paddedNumber, queuer } from "../utilities/utils";
 
 export const setCommandTopic = async (
   hub: IHub,
@@ -21,7 +16,7 @@ export const setCommandTopic = async (
   isAsync: boolean,
   timeout: number,
   operation
-) => {
+): Promise<string> => {
   const payload = isJsonString(pload)
     ? JSON.parse(pload.toLowerCase())
     : pload.toLowerCase();
@@ -43,8 +38,6 @@ export const setCommandTopic = async (
 
   RequestIds.push(command);
 
-  console.log("PROTOCOL", protocol);
-
   if (protocol.toLowerCase() === "udp") {
     let tries = timeout;
     try {
@@ -52,12 +45,13 @@ export const setCommandTopic = async (
         () => udpClient[hub.bridge_address].send(command),
         () => sendMqttMessage(mqttClient, topic, command, toSet),
         tries,
-        command
+        command,
+        isAsync
       );
       if (queuerResponse) {
-        console.info(`Request complete! -> ${command}`);
+        return `>>>>> UDP Server response received! -> ${command}`;
       } else {
-        console.info(`Request failed! -> ${command}`);
+        return `>>>>> UDP Server response not yet received! -> ${command}`;
       }
     } catch (error) {
       console.error("UDP Send Error:", error);
@@ -69,12 +63,17 @@ export const setCommandTopic = async (
         () => blindRollerClient[hub.bridge_address].write(command),
         () => sendMqttMessage(mqttClient, topic, command, toSet),
         tries,
-        command
+        command,
+        isAsync
       );
+      // if (isAsync) {
+      //   console.info(`Request sent to TCP Server! -> ${command}`);
+      // } else
       if (queuerResponse) {
-        console.info(`Request complete! -> ${command}`);
+        console.info(`TCP Server response received! -> ${command}`);
       } else {
-        console.info(`Request failed! -> ${command}`);
+        console.info(`TCP Server response not yet received! -> ${command}`);
+        return "TCP RESPONSE NOT YET REC";
       }
     } catch (error) {
       console.error("TCP Send Error:", error);
