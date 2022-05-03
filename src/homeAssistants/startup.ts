@@ -1,3 +1,4 @@
+import { SubscriptionList } from "../lib/Global";
 import * as logger from "../lib/logger/logger";
 import { toSnakeCase } from "../utilities/utils";
 
@@ -72,6 +73,8 @@ export const startup =
           let position_topic = `${mqttConfig.topic_prefix}/${blindName}/position`;
           let set_position_topic = `${mqttConfig.topic_prefix}/${blindName}/position/set`;
           let availability_topic = `${mqttConfig.availability_topic}`;
+          SubscriptionList.push(command_topic);
+          SubscriptionList.push(set_position_topic);
           const topics = [
             command_topic,
             position_topic,

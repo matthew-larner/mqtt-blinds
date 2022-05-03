@@ -1,7 +1,8 @@
-import { commandTopic, setPositionTopic } from "./process";
+import { setCommandTopic } from "./process";
 import { Handler } from "../contracts";
 import Queue from "../lib/queue";
-import { getRollerByName, preparePayload } from "../utilities/utils";
+import { getRollerByName, preparePayload, stall } from "../utilities/utils";
+import { SubscriptionList } from "../lib/Global";
 
 const topicQueue = new Queue();
 
@@ -27,8 +28,9 @@ export const homeAssistantCommandsHandler =
     let next = false;
 
     // waiting time for queuing is the timeout time
+
     do {
-      if (_topic !== "mqtt-blinds/null/position") {
+      if (SubscriptionList.indexOf(topic) !== -1) {
         console.info(`-> Enqueue : ${_topic} : ${payload}`);
         await topicQueue.topicOnQueue({
           payload,
@@ -40,8 +42,11 @@ export const homeAssistantCommandsHandler =
       if (isAsync) await stall(timeout / 2);
       next = true;
     } while (!next);
+
     next = false;
+
     allTopic = await topicQueue.getTopicsQueue();
+
     await topicQueue.clearQueue();
 
     const runProcess = async (topic) => {
@@ -53,37 +58,19 @@ export const homeAssistantCommandsHandler =
       const { hub, blind } = getRollerByName(hubs, blindsName);
 
       try {
-        switch (operation) {
-          case "setPositionTopic":
-            await setPositionTopic(
-              hub,
-              blind,
-              blindRollerClient,
-              topic,
-              payload,
-              mqttClient,
-              protocol,
-              udpClient,
-              isAsync,
-              _timeout
-            );
-            break;
-
-          case "commandTopic":
-            const response = await commandTopic(
-              hub,
-              blind,
-              blindRollerClient,
-              topic,
-              payload,
-              mqttClient,
-              protocol,
-              udpClient,
-              isAsync,
-              _timeout
-            );
-            return response;
-        }
+        return await setCommandTopic(
+          hub,
+          blind,
+          blindRollerClient,
+          topic,
+          payload,
+          mqttClient,
+          protocol,
+          udpClient,
+          isAsync,
+          _timeout,
+          operation
+        );
       } catch (error) {
         console.error("Home assistant commandHandler error:", error);
       }
@@ -95,7 +82,3 @@ export const homeAssistantCommandsHandler =
       }
     }
   };
-
-async function stall(stallTime = 3000) {
-  await new Promise((resolve) => setTimeout(resolve, stallTime));
-}

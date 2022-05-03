@@ -149,7 +149,7 @@ export const queuer = async (
   command: string
 ) => {
   let next = false;
-  let response = false;
+  let requested = false;
   let tries_ = tries;
   let tryCount = 0;
   do {
@@ -162,12 +162,10 @@ export const queuer = async (
     tries--;
     tryCount++;
 
-    if (!response) {
+    if (!requested) {
       console.info(`* * * * * Sending request try(${tryCount}) for `, command);
-      response = func1();
-      if (response) {
-        func2();
-      }
+      func1();
+      requested = true;
     } else if (!next) {
       console.log(
         `* * * * * Waiting reply from server... ${tryCount} for `,
@@ -184,6 +182,58 @@ export const queuer = async (
       if (pendingResponse) {
         return false;
       }
+      func2();
+      return true;
+    }
+    // once second every retry
+    await stall(1000);
+  } while (!next);
+};
+
+export const queuer2 = async (
+  func1: Function,
+  func2: Function,
+  tries: number,
+  command: string
+) => {
+  let next = false;
+  let requested = false;
+  let tries_ = tries;
+  let tryCount = 0;
+  do {
+    const pendingResponse = RequestIds.indexOf(command) !== -1;
+
+    if (!pendingResponse) {
+      next = true;
+    }
+
+    tries--;
+    tryCount++;
+
+    if (!requested) {
+      console.info(
+        `* * * * * Sending request try(${tryCount}) for requested `,
+        command
+      );
+      func1();
+      requested = true;
+    } else if (!next) {
+      console.log(
+        `* * * * * Waiting reply from UDP server... ${tryCount} for `,
+        command
+      );
+    }
+
+    if (tries <= 0 || next) {
+      const index = RequestIds.indexOf(command);
+      if (index !== -1) {
+        RequestIds.splice(index, 1); // 2nd parameter means remove one item only
+      }
+
+      if (pendingResponse) {
+        return false;
+      }
+      func2();
       return true;
     }
     // once second every retry
@@ -197,6 +247,6 @@ export const FileParser = async (fileUrl: string) => {
   };
 };
 
-async function stall(stallTime = 3000) {
+export const stall = async (stallTime = 3000) => {
   await new Promise((resolve) => setTimeout(resolve, stallTime));
-}
+};

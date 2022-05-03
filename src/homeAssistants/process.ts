@@ -2,9 +2,14 @@ import { IHub, IBlind, BlindRollerClient, UdpClient } from "../contracts";
 import { RequestIds } from "../lib/Global";
 import * as logger from "../lib/logger/logger";
 
-import { isJsonString, paddedNumber, queuer } from "../utilities/utils";
+import {
+  isJsonString,
+  paddedNumber,
+  queuer,
+  queuer2,
+} from "../utilities/utils";
 
-export const commandTopic = async (
+export const setCommandTopic = async (
   hub: IHub,
   blind: IBlind,
   blindRollerClient: BlindRollerClient[],
@@ -14,94 +19,46 @@ export const commandTopic = async (
   protocol: string,
   udpClient: UdpClient[],
   isAsync: boolean,
-  timeout: number
+  timeout: number,
+  operation
 ) => {
   const payload = isJsonString(pload)
     ? JSON.parse(pload.toLowerCase())
     : pload.toLowerCase();
 
-  const validPayload = ["open", "close", "stop"];
-  if (!validPayload.includes(payload)) {
-    return logger.error('Only allowed: "open", "close", "stop"');
+  let result: any = prepareSetPositionTopicCommand(
+    payload,
+    hub.bridge_address,
+    blind.motor_address
+  );
+  if (operation === "commandTopic") {
+    result = prepareCommandTopicCommand(
+      payload,
+      hub.bridge_address,
+      blind.motor_address
+    );
   }
 
-  const action = payload === "open" ? "o" : payload === "close" ? "c" : "s";
+  const { command, toSet } = result;
 
-  // send TCP Command
-  const command = `!${hub.bridge_address}${blind.motor_address}${action};`;
-
-  if (protocol.toLowerCase() === "udp") {
-    let tries = timeout;
-    try {
-      return await queuer(
-        () => udpClient[hub.bridge_address].send(command),
-        () => sendMqttMessage(mqttClient, topic, command, action),
-        tries,
-        command
-      );
-    } catch (error) {
-      console.error("UDP Send Error:", error);
-    }
-  } else if (protocol.toLowerCase() === "tcp") {
-    let tries = timeout;
-    try {
-      return await queuer(
-        () => blindRollerClient[hub.bridge_address].write(command),
-        () => sendMqttMessage(mqttClient, topic, command, action),
-        tries,
-        command
-      );
-    } catch (error) {
-      console.error("TCP Send Error:", error);
-    }
-  } else {
-    console.error(`${protocol} is not supported!`);
-  }
-};
-
-export const setPositionTopic = async (
-  hub: IHub,
-  blind: IBlind,
-  blindRollerClient: BlindRollerClient[],
-  topic: string,
-  pload: string,
-  mqttClient: any,
-  protocol: string,
-  udpClient: UdpClient[],
-  isAsync: boolean,
-  timeout: number
-) => {
-  const payload = isJsonString(pload)
-    ? JSON.parse(pload.toLowerCase())
-    : pload.toLowerCase();
-
-  const num = Number(payload);
-
-  if (isNaN(num) || typeof payload == "string") {
-    return logger.error("not a number!");
-  } else {
-    if (num > 100 || num < 0) {
-      return logger.error("Allowed range 0 to 100");
-    }
-  }
-  const numberToSet: string = paddedNumber(parseInt(payload), 3);
-
-  // send TCP Command
-
-  const command = `!${hub.bridge_address}${blind.motor_address}m${numberToSet};`;
-
-  // add request id
   RequestIds.push(command);
 
+  console.log("PROTOCOL", protocol);
+
   if (protocol.toLowerCase() === "udp") {
     let tries = timeout;
     try {
-      return await queuer(
+      const queuerResponse = await queuer(
         () => udpClient[hub.bridge_address].send(command),
-        () => sendMqttMessage(mqttClient, topic, command, numberToSet),
+        () => sendMqttMessage(mqttClient, topic, command, toSet),
         tries,
         command
       );
+      if (queuerResponse) {
+        console.info(`Request complete! -> ${command}`);
+      } else {
+        console.info(`Request failed! -> ${command}`);
+      }
     } catch (error) {
       console.error("UDP Send Error:", error);
     }
@@ -110,7 +67,7 @@ export const setPositionTopic = async (
     try {
       const queuerResponse = await queuer(
         () => blindRollerClient[hub.bridge_address].write(command),
-        () => sendMqttMessage(mqttClient, topic, command, numberToSet),
+        () => sendMqttMessage(mqttClient, topic, command, toSet),
         tries,
         command
       );
@@ -144,4 +101,47 @@ const sendMqttMessage = (
   const payload = JSON.stringify(msg);
   logger.info("********* send mqtt subscription topic " + payload);
   mqttClient.onPublish(_topic, payload);
+};
+
+const prepareSetPositionTopicCommand = (
+  payload: string,
+  bridge_address: string,
+  motor_address: string
+) => {
+  const num = Number(payload);
+
+  if (isNaN(num) || typeof payload == "string") {
+    return logger.error("not a number!");
+  } else {
+    if (num > 100 || num < 0) {
+      return logger.error("Allowed range 0 to 100");
+    }
+  }
+  const numberToSet: string = paddedNumber(parseInt(payload), 3);
+
+  // send TCP Command
+
+  return {
+    command: `!${bridge_address}${motor_address}m${numberToSet};`,
+    toSet: numberToSet,
+  };
+};
+
+const prepareCommandTopicCommand = (
+  payload: string,
+  bridge_address: string,
+  motor_address: string
+) => {
+  const validPayload = ["open", "close", "stop"];
+  if (!validPayload.includes(payload)) {
+    return logger.error('Only allowed: "open", "close", "stop"');
+  }
+
+  const action = payload === "open" ? "o" : payload === "close" ? "c" : "s";
+
+  // send TCP Command
+  return {
+    command: `!${bridge_address}${motor_address}${action};`,
+    toSet: action,
+  };
 };
