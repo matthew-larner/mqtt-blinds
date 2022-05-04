@@ -1,33 +1,35 @@
 import { IHub, IBlind, BlindRollerClient, UdpClient } from "../contracts";
-import { RequestIds } from "../lib/Global";
+import { CommandOnQueue, RequestIds } from "../lib/Global";
 import * as logger from "../lib/logger/logger";
 
-import { isJsonString, paddedNumber, queuer } from "../utilities/utils";
+import { isJsonString, looper, paddedNumber, queuer } from "../utilities/utils";
 
 export const setCommandTopic = async (
   hub: IHub,
   blind: IBlind,
   blindRollerClient: BlindRollerClient[],
   topic: string,
-  pload: string,
+  pLoad: string,
   mqttClient: any,
   protocol: string,
   udpClient: UdpClient[],
   isAsync: boolean,
   timeout: number,
   operation
-): Promise<string> => {
-  const payload = isJsonString(pload)
-    ? JSON.parse(pload.toLowerCase())
-    : pload.toLowerCase();
+): Promise<void> => {
+  const payload = isJsonString(pLoad)
+    ? JSON.parse(pLoad.toLowerCase())
+    : pLoad.toLowerCase();
+  let result: any;
 
-  let result: any = prepareSetPositionTopicCommand(
-    payload,
-    hub.bridge_address,
-    blind.motor_address
-  );
   if (operation === "commandTopic") {
     result = prepareCommandTopicCommand(
+      payload,
+      hub.bridge_address,
+      blind.motor_address
+    );
+  } else {
+    result = prepareSetPositionTopicCommand(
       payload,
       hub.bridge_address,
       blind.motor_address
@@ -39,42 +41,26 @@ export const setCommandTopic = async (
   RequestIds.push(command);
 
   if (protocol.toLowerCase() === "udp") {
-    let tries = timeout;
     try {
-      const queuerResponse = await queuer(
-        () => udpClient[hub.bridge_address].send(command),
-        () => sendMqttMessage(mqttClient, topic, command, toSet),
-        tries,
-        command,
-        isAsync
-      );
-      if (queuerResponse) {
-        return `>>>>> UDP Server response received! -> ${command}`;
-      } else {
-        return `>>>>> UDP Server response not yet received! -> ${command}`;
-      }
+      if (isAsync) CommandOnQueue.splice(0);
+      CommandOnQueue.push({
+        func1: () => udpClient[hub.bridge_address].send(command),
+        func2: () => sendMqttMessage(mqttClient, topic, command, toSet),
+        command: command,
+      });
+      await looper(isAsync);
     } catch (error) {
       console.error("UDP Send Error:", error);
     }
   } else if (protocol.toLowerCase() === "tcp") {
-    let tries = timeout;
     try {
-      const queuerResponse = await queuer(
-        () => blindRollerClient[hub.bridge_address].write(command),
-        () => sendMqttMessage(mqttClient, topic, command, toSet),
-        tries,
-        command,
-        isAsync
-      );
-      // if (isAsync) {
-      //   console.info(`Request sent to TCP Server! -> ${command}`);
-      // } else
-      if (queuerResponse) {
-        console.info(`TCP Server response received! -> ${command}`);
-      } else {
-        console.info(`TCP Server response not yet received! -> ${command}`);
-        return "TCP RESPONSE NOT YET REC";
-      }
+      if (isAsync) CommandOnQueue.splice(0);
+      CommandOnQueue.push({
+        func1: () => blindRollerClient[hub.bridge_address].write(command),
+        func2: () => sendMqttMessage(mqttClient, topic, command, toSet),
+        command: command,
+      });
+      await looper(isAsync);
     } catch (error) {
       console.error("TCP Send Error:", error);
     }
@@ -98,7 +84,7 @@ const sendMqttMessage = (
   };
 
   const payload = JSON.stringify(msg);
-  logger.info("********* send mqtt subscription topic " + payload);
+  logger.info("Send mqtt subscription topic " + payload);
   mqttClient.onPublish(_topic, payload);
 };
 

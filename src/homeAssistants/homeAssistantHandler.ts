@@ -1,8 +1,13 @@
 import { setCommandTopic } from "./process";
 import { Handler } from "../contracts";
 import Queue from "../lib/queue";
-import { getRollerByName, preparePayload, stall } from "../utilities/utils";
-import { SubscriptionList } from "../lib/Global";
+import {
+  getRollerByName,
+  looper,
+  preparePayload,
+  stall,
+} from "../utilities/utils";
+import { CommandOnQueue, SubscriptionList } from "../lib/Global";
 
 const topicQueue = new Queue();
 
@@ -29,21 +34,14 @@ export const homeAssistantCommandsHandler =
 
     // waiting time for queuing is the timeout time
 
-    do {
-      if (SubscriptionList.indexOf(topic) !== -1) {
-        console.info(`-> Enqueue : ${_topic} : ${payload}`);
-        await topicQueue.topicOnQueue({
-          payload,
-          operation,
-          blindsName,
-          protocol,
-        });
-      }
-      if (!isAsync) await stall(timeout / 2);
-      next = true;
-    } while (!next && !isAsync);
-
-    next = false;
+    if (SubscriptionList.indexOf(topic) !== -1) {
+      await topicQueue.topicOnQueue({
+        payload,
+        operation,
+        blindsName,
+        protocol,
+      });
+    }
 
     allTopic = await topicQueue.getTopicsQueue();
 
@@ -78,8 +76,12 @@ export const homeAssistantCommandsHandler =
 
     if (allTopic.length > 0) {
       for (let i = 0; i < allTopic.length; i++) {
-        const response = await runProcess(allTopic[i]);
-        console.log(response);
+        await runProcess({
+          payload,
+          operation,
+          blindsName,
+          protocol,
+        });
       }
     }
   };

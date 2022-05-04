@@ -1,5 +1,5 @@
 import { RollerBlindHandler } from "../contracts";
-import { RequestIds } from "../lib/Global";
+import { ReceivedResponse, RequestIds } from "../lib/Global";
 import { prePareAndValidateTopic } from "../utilities/utils";
 
 export const udpRollerBlindsCommandsHandler = ({
@@ -25,6 +25,8 @@ export const udpRollerBlindsCommandsHandler = ({
         `Can not continue!  bridge_address and motor_address not found! ${message}`
       );
     }
+
+    ReceivedResponse.push(message);
 
     const unique_id = blindName;
     let positionSet: string = "0";

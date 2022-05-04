@@ -1,9 +1,12 @@
 import * as YAML from "yaml";
 import * as fs from "fs";
 import { IHub } from "../contracts";
-import { RequestIds } from "../lib/Global";
+import { CommandOnQueue, ReceivedResponse, RequestIds } from "../lib/Global";
+import * as logger from "../lib/logger/logger";
 
-export const isJsonString = (str) => {
+let inProcess = false;
+
+export const isJsonString = (str: string) => {
   try {
     JSON.parse(str);
   } catch (e) {
@@ -200,4 +203,43 @@ export const FileParser = async (fileUrl: string) => {
 
 export const stall = async (stallTime = 3000) => {
   await new Promise((resolve) => setTimeout(resolve, stallTime));
+};
+
+export const looper = async (isAsync: boolean) => {
+  let times = 20;
+
+  for (let x = 0; x < CommandOnQueue.length; x++) {
+    let serverResponse = "";
+    let tries = times;
+    if (inProcess) {
+      console.log("Still in process!. message put in queue...");
+      return;
+    }
+
+    CommandOnQueue[x].func1();
+
+    if (CommandOnQueue.length < 1) return;
+    for (let i = 0; i < times; i++) {
+      inProcess = true;
+      if (!isAsync) await stall(1000);
+
+      if (!isAsync) console.log(`Waiting for TCP Server response...(${tries})`);
+
+      if (ReceivedResponse.indexOf(CommandOnQueue[x].command) !== -1) {
+        serverResponse = ReceivedResponse[0];
+        ReceivedResponse.splice(CommandOnQueue[x].command);
+        CommandOnQueue[x].func2();
+        break;
+      }
+      tries--;
+    }
+    if (!isAsync) {
+      if (serverResponse) {
+        logger.info(`>>>>> Server responded! -> ${serverResponse}`);
+      } else {
+        logger.error(`!!!!! No response from server!`);
+      }
+    }
+    inProcess = false;
+  }
 };
