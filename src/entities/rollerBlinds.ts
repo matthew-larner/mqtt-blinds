@@ -3,43 +3,20 @@ import * as logger from "../lib/logger/logger";
 
 const connect = async (
   host: string,
-  port: number,
-  reconnectSeconds: number = 15,
-  idleSeconds: number = 60
+  port: number
 ) => {
   const client = new net.Socket();
-  let timedOut = false;
 
   client.on("connect", () => {
-    logger.info("Connected to roller-blind");
-    client.setTimeout(idleSeconds * 10000);
+    logger.info("Connected to TCP/UDP server");
   });
 
   client.on("close", () => {
-    logger.info("roller-blind connection closed");
-
-    if (timedOut) {
-      client.connect(port, host);
-      timedOut = false;
-
-      return;
-    }
-
-    setTimeout(() => {
-      client.connect(port, host);
-    }, reconnectSeconds * 1000);
+    logger.info("TCP/UDP connection closed");
   });
 
   client.on("error", (err) => {
     logger.info(`Blind error: ${err.message}`);
-  });
-
-  client.on("timeout", () => {
-    logger.info(
-      `No TCP communication detected in the last ${idleSeconds} seconds. Force reconnecting...`
-    );
-    timedOut = true;
-    client.end();
   });
 
   client.connect(port, host);
