@@ -11,9 +11,10 @@ import { FileParser } from "./utilities/utils";
 export async function main() {
   try {
     // Get and parse configuration
-    const config = await (await FileParser("./config/config.yml")).readFile();
-    const { sourceFilePath, allowedProtocols } = config || {};
-    const devicesConfig: any = (await FileParser(sourceFilePath)).readFile();
+
+    const devicesConfig: any = (
+      await FileParser("./config/configuration.yml")
+    ).readFile();
     const { mqtt: mqttConfig, hubs, hub_communication } = devicesConfig;
 
     if (!mqttConfig.discovery) {

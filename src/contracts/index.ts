@@ -50,11 +50,6 @@ export interface MqttConnection {
   hubs: Hubs;
 }
 
-export interface DevicesConnection {
-  hubs: Hubs[];
-  allowedProtocols: string[];
-}
-
 export interface MqttClient {
   onMessage: (callback: OnMessageCallback) => void;
   onPublish: (topic: string, payload: string) => void;
