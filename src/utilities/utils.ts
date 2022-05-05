@@ -223,7 +223,10 @@ export const looper = async (isAsync: boolean) => {
       inProcess = true;
       if (!isAsync) await stall(1000);
 
-      if (!isAsync) console.log(`Waiting for TCP Server response...(${tries})`);
+      if (!isAsync)
+        console.log(
+          `Waiting to received ${CommandOnQueue[x].command} from TCP Server...(${tries})`
+        );
 
       if (ReceivedResponse.indexOf(CommandOnQueue[x].command) !== -1) {
         serverResponse = ReceivedResponse[0];
