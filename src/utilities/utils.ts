@@ -171,21 +171,28 @@ export const queuer = async (isAsync: boolean, timeout) => {
     if (CommandOnQueue.length < 1) return;
     for (let i = 0; i < times; i++) {
       inProcess = true;
+
       if (!isAsync) await stall(1000);
 
       if (!isAsync)
         console.log(
-          `Waiting to received ${CommandOnQueue[x].command} from TCP Server...(${tries})`
+          `Number of queue:`,
+          CommandOnQueue.length,
+          `Waiting to received ${
+            CommandOnQueue[x].command
+          } from TCP Server... try(${tries}), rec #${x + 1}`
         );
 
       if (ReceivedResponse.indexOf(CommandOnQueue[x].command) !== -1) {
         serverResponse = ReceivedResponse[0];
         ReceivedResponse.splice(CommandOnQueue[x].command);
         CommandOnQueue[x].func2();
+
         break;
       }
       tries--;
     }
+
     if (!isAsync) {
       if (serverResponse) {
         logger.info(`>>>>> Server responded! -> ${serverResponse}`);
@@ -195,4 +202,5 @@ export const queuer = async (isAsync: boolean, timeout) => {
     }
     inProcess = false;
   }
+  CommandOnQueue.splice(0);
 };
