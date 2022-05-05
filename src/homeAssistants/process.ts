@@ -2,7 +2,7 @@ import { IHub, IBlind, BlindRollerClient, UdpClient } from "../contracts";
 import { CommandOnQueue, RequestIds } from "../lib/Global";
 import * as logger from "../lib/logger/logger";
 
-import { isJsonString, looper, paddedNumber, queuer } from "../utilities/utils";
+import { isJsonString, queuer, paddedNumber } from "../utilities/utils";
 
 export const setCommandTopic = async (
   hub: IHub,
@@ -15,7 +15,7 @@ export const setCommandTopic = async (
   udpClient: UdpClient[],
   isAsync: boolean,
   timeout: number,
-  operation
+  operation: string
 ): Promise<void> => {
   const payload = isJsonString(pLoad)
     ? JSON.parse(pLoad.toLowerCase())
@@ -48,7 +48,7 @@ export const setCommandTopic = async (
         func2: () => sendMqttMessage(mqttClient, topic, command, toSet),
         command: command,
       });
-      await looper(isAsync);
+      await queuer(isAsync, timeout);
     } catch (error) {
       console.error("UDP Send Error:", error);
     }
@@ -60,7 +60,7 @@ export const setCommandTopic = async (
         func2: () => sendMqttMessage(mqttClient, topic, command, toSet),
         command: command,
       });
-      await looper(isAsync);
+      await queuer(isAsync, timeout);
     } catch (error) {
       console.error("TCP Send Error:", error);
     }

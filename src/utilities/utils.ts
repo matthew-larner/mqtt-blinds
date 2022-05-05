@@ -145,56 +145,6 @@ export const prePareAndValidateTopic = (message: string, hubs: any) => {
   return { blindName, position, action };
 };
 
-export const queuer = async (
-  func1: Function,
-  func2: Function,
-  tries: number,
-  command: string,
-  isAsync: boolean
-) => {
-  let next = false; //TODO : add async contition here
-  let requested = false;
-  let tries_ = tries;
-  let tryCount = 0;
-
-  do {
-    const pendingResponse = RequestIds.indexOf(command) !== -1;
-
-    if (!pendingResponse) {
-      next = true;
-    }
-
-    tries--;
-    tryCount++;
-
-    if (!requested) {
-      console.info(`* * * * * Sending request try(${tryCount}) for `, command);
-      func1();
-      requested = true;
-    } else if (!next) {
-      console.log(
-        `* * * * * Waiting reply from server... ${tryCount} for `,
-        command
-      );
-    }
-
-    if (tries <= 0 || next) {
-      const index = RequestIds.indexOf(command);
-      if (index !== -1) {
-        RequestIds.splice(index, 1); // 2nd parameter means remove one item only
-      }
-
-      if (pendingResponse) {
-        return false;
-      }
-      func2();
-      return true;
-    }
-    // once second every retry
-    await stall(1000);
-  } while (!next && !isAsync);
-};
-
 export const FileParser = async (fileUrl: string) => {
   return {
     readFile: () => YAML.parse(fs.readFileSync(fileUrl, "utf8")),
@@ -205,8 +155,8 @@ export const stall = async (stallTime = 3000) => {
   await new Promise((resolve) => setTimeout(resolve, stallTime));
 };
 
-export const looper = async (isAsync: boolean) => {
-  let times = 20;
+export const queuer = async (isAsync: boolean, timeout) => {
+  let times = timeout;
 
   for (let x = 0; x < CommandOnQueue.length; x++) {
     let serverResponse = "";

@@ -3,7 +3,7 @@ import { Handler } from "../contracts";
 import Queue from "../lib/queue";
 import {
   getRollerByName,
-  looper,
+  queuer,
   preparePayload,
   stall,
 } from "../utilities/utils";
