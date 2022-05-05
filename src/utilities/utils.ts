@@ -174,14 +174,17 @@ export const queuer = async (isAsync: boolean, timeout) => {
 
       if (!isAsync) await stall(1000);
 
-      if (!isAsync)
+      if (!isAsync) {
         console.log(
           `Number of queue:`,
           CommandOnQueue.length,
           `Waiting to received ${
             CommandOnQueue[x].command
-          } from TCP Server... try(${tries}), rec #${x + 1}`
+          } from TCP Server... try(${tries}), rec #${x + 1} received -> ${
+            ReceivedResponse[0]
+          }`
         );
+      }
 
       if (ReceivedResponse.indexOf(CommandOnQueue[x].command) !== -1) {
         serverResponse = ReceivedResponse[0];
