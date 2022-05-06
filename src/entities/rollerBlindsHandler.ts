@@ -10,6 +10,8 @@ export const rollerBlindsCommandsHandler = async ({
   return async (data: Buffer) => {
     const message = data.toString().replace(/\s/g, "");
 
+    console.log("Response from server:", message);
+
     const index = RequestIds.indexOf(message);
     if (index > -1) {
       RequestIds.splice(index, 1); // 2nd parameter means remove one item only
