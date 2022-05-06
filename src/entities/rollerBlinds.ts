@@ -1,8 +1,13 @@
 import * as net from "net";
 import * as logger from "../lib/logger/logger";
 
-const connect = async (host: string, port: number) => {
+const connect = async (
+  host: string,
+  port: number,
+  reconnectSeconds: number = 10
+) => {
   const client = new net.Socket();
+  let timedOut = false;
 
   client.on("connect", () => {
     logger.info("Connected to TCP/UDP server");
@@ -10,6 +15,16 @@ const connect = async (host: string, port: number) => {
 
   client.on("close", () => {
     logger.info("TCP/UDP connection closed");
+    if (timedOut) {
+      client.connect(port, host);
+      timedOut = false;
+      return;
+    } else {
+      setTimeout(() => {
+        logger.info("TCP/UDP connecting...");
+        client.connect(port, host);
+      }, reconnectSeconds * 1000);
+    }
   });
 
   client.on("error", (err) => {

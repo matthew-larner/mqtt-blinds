@@ -20,9 +20,7 @@ const connect = async (host: string, port: number) => {
   });
 
   client.on("timeout", () => {
-    logger.info(`No UDP communication detected in the  Force reconnecting...`);
-    // timedOut = true;
-    // client.end();
+    logger.info(`No UDP communication detected!`);
   });
   const send = (topic: string, payload: any) => {
     const buff = Buffer.from(topic, "utf-8");
