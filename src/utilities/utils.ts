@@ -115,7 +115,8 @@ export const prePareAndValidateTopic = (message: string, hubs: any) => {
     blinds.push(...res);
   }
 
-  let cleanTopic = message.replace(/[,;! ]+/g, "").trim(); // clean
+  let cleanTopic = message.replace(/[! ]+/g, "").trim(); // clean
+  cleanTopic = cleanTopic.split(';')[0].split(',')[0]; // remove everything after and including the ; and , characters
 
   // check if command topic or set position topic
   // get last string
