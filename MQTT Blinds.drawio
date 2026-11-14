@@ -1,0 +1,307 @@
+<mxfile host="Electron" modified="2023-08-26T11:23:56.948Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.8 Chrome/114.0.5735.289 Electron/25.5.0 Safari/537.36" etag="35DSrcwqJscdFq_jDxik" version="21.6.8" type="device">
+  <diagram name="Page-1" id="-SEkYdZK8_RQy3t-ObAM">
+    <mxGraphModel dx="2066" dy="3097" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-1" value="MQTT connection" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=26.7;fontColor=#333333;fontStyle=1;align=left;spacing=3.8;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=xwngpCG23Qxo;" vertex="1" parent="1">
+          <mxGeometry x="83" y="840" width="300" height="71" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-2" value="We want to emit a LWT message on a topic when this service goes offline/online. The topic to use is from mqtt.availability_topic in the config. The message should be &#39;online&#39; if the service is online and &#39;offline&#39; if the service is offline." style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=16.6;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=xwngF7py4aw2;" vertex="1" parent="1">
+          <mxGeometry x="83" y="963" width="240" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-3" value="&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:16.6px;&quot;&gt;This can be specified in the connect string. .e.g. &#xa;&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#007020;font-weight: bold;&quot;&gt;var&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt; mqtt    &lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#666666;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt; require(&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#4070a0;&quot;&gt;&#39;mqtt&#39;&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt;); &#xa;&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#007020;font-weight: bold;&quot;&gt;var&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt; client  &lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#666666;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt; mqtt.connect(&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#4070a0;&quot;&gt;&#39;mqtt://broker.mqttdashboard.com&#39;&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt;,{   will&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#666666;&quot;&gt;:&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt; {     topic&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#666666;&quot;&gt;:&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt; &lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#4070a0;&quot;&gt;&#39;inception/available&#39;&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt;,     payload; &lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#4070a0;&quot;&gt;&#39;offline&#39;&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt;,     qos&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#666666;&quot;&gt;:&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt; &lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#40a070;&quot;&gt;1&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt;,     retain&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#666666;&quot;&gt;:&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt; &lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#007020;font-weight: bold;&quot;&gt;true&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;color:#555555;&quot;&gt;   } });&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=xwngTZr76bg.;" vertex="1" parent="1">
+          <mxGeometry x="323" y="963" width="240" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-4" value="LWT message (an online/offline status)" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=26.7;fontColor=#333333;align=left;spacing=3.8;verticalAlign=middle;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=xwngWa~itO-5;" vertex="1" parent="1">
+          <mxGeometry x="83" y="892" width="952" height="71" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-5" value="As soon as the connection is made, publish a &#39;online&#39; message to the mqtt.availability_topic topic. If this service crashes, the &#39;offline&#39; message will be published automatically." style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=16.6;fontStyle=2;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=xwngSRPMzStQ;" vertex="1" parent="1">
+          <mxGeometry x="563" y="963" width="240" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-6" value="On Startup" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=26.7;fontColor=#333333;fontStyle=1;spacing=3.8;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=~wngBGnefdFs;" vertex="1" parent="1">
+          <mxGeometry x="98" y="1275" width="180" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-7" value="Fetch blinds" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=~wngQo-qBTUS;" vertex="1" parent="1">
+          <mxGeometry x="585" y="1545" width="150" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-8" value="Publish Message to MQTT topic" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=9;strokeColor=#5E5E5E;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=~wngCM6Ugvgg;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="1538" width="120" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-9" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=1.009;exitY=0.5;exitPerimeter=0;entryX=-0.007;entryY=0.5;entryPerimeter=0;lucidId=~wngjkjfu_vM;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-8" target="_eBOtiYvHq5mVtx5obwK-10">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-10" value="Listen on topic &#39;command_topic&#39; AND &#xa;&#39;set_position_topic&#39;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=9;strokeColor=#5E5E5E;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=~wngMtpUe_DS;" vertex="1" parent="1">
+          <mxGeometry x="1455" y="1534" width="150" height="98" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-11" value="Setup home assistant discovery - this tells the smarthome system which blinds to create" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=26.7;fontColor=#333333;align=left;spacing=3.8;verticalAlign=middle;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=~wngg0WVKGrJ;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1319" width="1417" height="71" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-12" value="On app startup" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=9;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=SAngMbNRhTwu;" vertex="1" parent="1">
+          <mxGeometry x="143" y="1538" width="120" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-13" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=1.009;exitY=0.5;exitPerimeter=0;entryX=0.009;entryY=0.5;entryPerimeter=0;lucidId=XAngkI~NsTro;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-12" target="_eBOtiYvHq5mVtx5obwK-14">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-14" value="mqtt.discovery " style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;rhombus;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=YAngFQ38Qm.9;" vertex="1" parent="1">
+          <mxGeometry x="323" y="1538" width="120" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-15" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13.3;fontColor=#333333;fontStyle=1;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=0.991;exitY=0.5;exitPerimeter=0;entryX=-0.007;entryY=0.5;entryPerimeter=0;lucidId=~AngcOs.xS8Q;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-14" target="_eBOtiYvHq5mVtx5obwK-7">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-16" value="true" style="text;html=1;resizable=0;labelBackgroundColor=default;align=center;verticalAlign=middle;fontStyle=1;fontColor=#333333;fontSize=13.3;" vertex="1" parent="_eBOtiYvHq5mVtx5obwK-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-17" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13.3;fontColor=#333333;fontStyle=1;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=0.5;exitY=0.996;exitPerimeter=0;entryX=0.5;entryY=-0.009;entryPerimeter=0;lucidId=cBngSRtxKQC7;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-14" target="_eBOtiYvHq5mVtx5obwK-19">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-18" value="false" style="text;html=1;resizable=0;labelBackgroundColor=default;align=center;verticalAlign=middle;fontStyle=1;fontColor=#333333;fontSize=13.3;" vertex="1" parent="_eBOtiYvHq5mVtx5obwK-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-19" value="Don&#39;t go any further" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=hBngIt.hRLQB;" vertex="1" parent="1">
+          <mxGeometry x="323" y="1736" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-20" value="&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:13.2px;&quot;&gt;from &lt;/span&gt;&lt;span style=&quot;font-size:16px;color:#000000;&quot;&gt;configuration.yml&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=EBngF1J75hhh;" vertex="1" parent="1">
+          <mxGeometry x="308" y="1396" width="135" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-21" value="&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:13.2px;&quot;&gt;Loop through &lt;/span&gt;&lt;span style=&quot;font-size:16px;color:#000000;&quot;&gt;configuration.yml&#xa;for each hubs.host.blinds&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=~wngI6Kaa.qS;" vertex="1" parent="1">
+          <mxGeometry x="585" y="1640" width="135" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-22" value="Command Topic" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=26.7;fontColor=#333333;fontStyle=1;align=left;spacing=3.8;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=XuogyyFIYMDn;" vertex="1" parent="1">
+          <mxGeometry x="75" y="2430" width="300" height="71" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-23" value="On message" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=9;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=Xuogkei-lYwQ;" vertex="1" parent="1">
+          <mxGeometry x="83" y="2676" width="218" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-24" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=1.005;exitY=0.5;exitPerimeter=0;entryX=-0.005;entryY=0.5;entryPerimeter=0;lucidId=XuogMM1HaPk7;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-23" target="_eBOtiYvHq5mVtx5obwK-34">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-25" value="Listen on the command topic. On message, send TCP/UDP command to control blind." style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=26.7;fontColor=#333333;align=left;spacing=3.8;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=XuogwiojYYOE;" vertex="1" parent="1">
+          <mxGeometry x="75" y="2520" width="1305" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-26" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=1.007;exitY=0.5;exitPerimeter=0;entryX=-0.009;entryY=0.5;entryPerimeter=0;lucidId=5pvi9pwkLFRQ;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-7" target="_eBOtiYvHq5mVtx5obwK-8">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-27" value="foreach" style="text;html=1;resizable=0;labelBackgroundColor=default;align=center;verticalAlign=middle;fontStyle=1;fontColor=#333333;fontSize=13.3;" vertex="1" parent="_eBOtiYvHq5mVtx5obwK-26">
+          <mxGeometry x="-0.17579096995327892" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-28" value="&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:13px;font-weight: bold;&quot;&gt;Example Messages:&lt;/span&gt;&lt;span style=&quot;font-size:13px;&quot;&gt;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:10.2px;&quot;&gt;&quot;open&quot;&#xa;&quot;close&quot;&#xa;&quot;stop&quot;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=oGogdwmHoMM5;" vertex="1" parent="1">
+          <mxGeometry x="116" y="2790" width="154" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-29" value="Set Position Topic" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=26.7;fontColor=#333333;fontStyle=1;align=left;spacing=3.8;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=yFvi3Vl6H8lD;" vertex="1" parent="1">
+          <mxGeometry x="90" y="3360" width="300" height="71" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-30" value="On message" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=9;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=yFvieiPV.-9a;" vertex="1" parent="1">
+          <mxGeometry x="98" y="3606" width="218" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-31" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=1.005;exitY=0.5;exitPerimeter=0;entryX=-0.005;entryY=0.5;entryPerimeter=0;lucidId=yFviZIriX8ob;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-30" target="_eBOtiYvHq5mVtx5obwK-36">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-32" value="Listen on the set position topic. On message, send TCP/UDP command to control blind." style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=26.7;fontColor=#333333;align=left;spacing=3.8;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=yFviwcTTrhSe;" vertex="1" parent="1">
+          <mxGeometry x="90" y="3450" width="1305" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-33" value="&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:13px;font-weight: bold;&quot;&gt;Example Messages:&lt;/span&gt;&lt;span style=&quot;font-size:13px;&quot;&gt;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:10.2px;&quot;&gt;0&#xa;5&#xa;10&#xa;50&#xa;95&#xa;100&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=yFvinO~d3J-Q;" vertex="1" parent="1">
+          <mxGeometry x="131" y="3720" width="154" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-34" value="Send TCP/UDP command" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=9;strokeColor=#5e5e5e;strokeOpacity=100;fillOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#9391ff;strokeWidth=2.3;lucidId=3q5KXQU8UpCe;" vertex="1" parent="1">
+          <mxGeometry x="544" y="2676" width="218" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-35" value="&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:25.7px;font-weight: bold;&quot;&gt;In format:&lt;/span&gt;&lt;span style=&quot;font-size:25.7px;&quot;&gt;&#xa;&quot;!&quot; + bridge_address + motor_address + command + &quot;;&quot;&#xa;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:25.7px;font-weight: bold;&quot;&gt;Where:&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:25.7px;&quot;&gt;- command is: &#39;o&#39; if message is open, &#39;c&#39; if close, &#39;s&#39; if stop&#xa;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:25.7px;font-weight: bold;&quot;&gt;example: &lt;/span&gt;&lt;span style=&quot;font-size:25.7px;&quot;&gt;!123D001o;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=W8vioTKrejN1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="2775" width="346" height="346" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-36" value="Send TCP/UDP command" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=9;strokeColor=#5e5e5e;strokeOpacity=100;fillOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#9391ff;strokeWidth=2.3;lucidId=5r5KASj.ZA.T;" vertex="1" parent="1">
+          <mxGeometry x="533" y="3606" width="218" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-37" value="On TCP Command Received" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=26.7;fontColor=#333333;fontStyle=1;align=left;spacing=3.8;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=zw5Kkf3jRsd0;" vertex="1" parent="1">
+          <mxGeometry x="105" y="4380" width="525" height="71" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-38" value="Publish MQTT message" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=9;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=7w5KJgcEdVQr;" vertex="1" parent="1">
+          <mxGeometry x="1935" y="4545" width="218" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-39" value="On TCP command received" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=9;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=yA5KiEeVyi_s;" vertex="1" parent="1">
+          <mxGeometry x="116" y="4543" width="218" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-40" value="Strip out everything after and including the comma (,) if exists." style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=z25K9KOKEowl;" vertex="1" parent="1">
+          <mxGeometry x="390" y="4543" width="177" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-41" value="&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:19px;font-weight: bold;&quot;&gt;topic:&lt;/span&gt;&lt;span style=&quot;font-size:5.7px;&quot;&gt; &lt;/span&gt;&lt;span style=&quot;font-size:12.3px;&quot;&gt;&lt;span style=&quot;font-size:12.3px;&quot;&gt;&amp;lt;discovery_prefix&amp;gt;/cover/&amp;lt;name&amp;gt;/config&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:12.3px;font-weight: bold;&quot;&gt;where:&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;&quot;&gt;- discovery_prefix = mqtt.discovery_prefix from config&#xa;- name = blinds.name from configuration.yml converted to lowercase/snake_case &lt;/span&gt;&lt;span style=&quot;font-size:12.3px;&quot;&gt;&lt;span style=&quot;font-size:12.3px;&quot;&gt;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:12.3px;font-weight: bold;&quot;&gt;Example:&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:12.3px;&quot;&gt;homeassistant/cover/bed_1_roller_blind/config&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=~wngVQ-tOzQI;" vertex="1" parent="1">
+          <mxGeometry x="960" y="1646" width="300" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-42" value="Check if the command is valid" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=CJvMQDbYzSxD;" vertex="1" parent="1">
+          <mxGeometry x="1299" y="4543" width="177" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-43" value="Determine position" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=SLvMMVXe69tA;" vertex="1" parent="1">
+          <mxGeometry x="1692" y="4545" width="177" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-44" value="If command=o -&amp;gt; 100&#xa;if command=c -&amp;gt; 0&#xa;if command=s -&amp;gt; 50&#xa;if command=m -&amp;gt; use the position with leading zeros stripped e.g. m005 -&amp;gt; 5 " style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=2LvMXZQ9TOFQ;" vertex="1" parent="1">
+          <mxGeometry x="1680" y="4635" width="210" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-45" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=1.006;exitY=0.5;exitPerimeter=0;entryX=-0.005;entryY=0.5;entryPerimeter=0;lucidId=YNvMMP09VjR7;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-43" target="_eBOtiYvHq5mVtx5obwK-38">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-46" value="&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:19px;font-weight: bold;&quot;&gt;topic:&lt;/span&gt;&lt;span style=&quot;font-size:5.7px;&quot;&gt; &lt;/span&gt;&lt;a href=&quot;http://&lt;mqtt.topic_prefix&gt;/{unique_id}/position&quot;&gt;&lt;span style=&quot;font-size:12.3px;&quot;&gt;&amp;lt;mqtt.topic_prefix&amp;gt;/{unique_id}/position&lt;/span&gt;&lt;/a&gt;&lt;a href=&quot;http://&lt;mqtt.topic_prefix&gt;/{unique_id}/position&quot;&gt;&lt;span style=&quot;font-size:12.3px;&quot;&gt;&#xa;&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot;font-size:12.3px;font-weight: bold;&quot;&gt;where:&lt;/span&gt;&lt;span style=&quot;font-size:10.7px;&quot;&gt;&#xa;-unique_id = light name from configuration.yml converted to lowercase &amp;amp; snake_case&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:12.3px;&quot;&gt;&lt;span style=&quot;font-size:12.3px;&quot;&gt;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:12.3px;font-weight: bold;&quot;&gt;Example topic:&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:12.3px;&quot;&gt;mqtt-blinds/bed_1_roller_blind/position&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=YJvMiACH.DII;" vertex="1" parent="1">
+          <mxGeometry x="2190" y="4440" width="300" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-47" value="Sync vs Async" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=26.7;fontColor=#333333;fontStyle=1;align=left;spacing=3.8;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=ROvM3Ysu-gIm;" vertex="1" parent="1">
+          <mxGeometry x="116" y="5070" width="525" height="71" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-48" value="&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:25.7px;font-weight: bold;&quot;&gt;In format:&lt;/span&gt;&lt;span style=&quot;font-size:25.7px;&quot;&gt;&#xa;&quot;!&quot; + bridge_address + motor_address + &#39;m&#39; + position + &quot;;&quot;&#xa;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:25.7px;font-weight: bold;&quot;&gt;Where:&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:25.7px;&quot;&gt;- position is from the message, padded with leading zeros so it&#39;s always 3 numbers long e.g. &#xa;&lt;/span&gt;&lt;span style=&quot;font-size:16.8px;&quot;&gt;0 -&amp;gt; 000&#xa;5 -&amp;gt; 005&#xa;10 -&amp;gt; 010&#xa;50 -&amp;gt; 050&#xa;95-&amp;gt; 095&#xa;100 -&amp;gt; 100&lt;/span&gt;&lt;span style=&quot;font-size:25.7px;&quot;&gt;&#xa;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:25.7px;font-weight: bold;&quot;&gt;example:&lt;/span&gt;&lt;span style=&quot;font-size:25.7px;&quot;&gt; !123D001m050;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=iX4Kms~1_lcD;" vertex="1" parent="1">
+          <mxGeometry x="431" y="3720" width="446" height="446" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-49" value="&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:13px;font-weight: bold;&quot;&gt;Example Valid Commands:&lt;/span&gt;&lt;span style=&quot;font-size:13px;&quot;&gt;&#xa;&#xa;!123D001m080;&#xa;!123D001o;&#xa;!123D001s;&#xa;!123D001c;&#xa;&#xa;!L40m060,R58;&#xa;!53Tm060,R3E;&#xa;&#xa;!463r081b180,R8C; (r is the same as m - blind position)&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=1F5KVmVY7QAH;" vertex="1" parent="1">
+          <mxGeometry x="127" y="4680" width="210" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-50" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=1.005;exitY=0.5;exitPerimeter=0;entryX=-0.006;entryY=0.5;entryPerimeter=0;lucidId=YT09PDSf7JLU;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-39" target="_eBOtiYvHq5mVtx5obwK-40">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-51" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=1.006;exitY=0.5;exitPerimeter=0;entryX=-0.006;entryY=0.5;entryPerimeter=0;lucidId=ge19GEfqVjPc;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-58" target="_eBOtiYvHq5mVtx5obwK-53">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-52" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=1.006;exitY=0.5;exitPerimeter=0;entryX=-0.006;entryY=0.5;entryPerimeter=0;lucidId=TV09pGTx9utL;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-40" target="_eBOtiYvHq5mVtx5obwK-58">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-53" value="Parse the message" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=J209u96fHl8b;" vertex="1" parent="1">
+          <mxGeometry x="990" y="4543" width="177" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-54" value="&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:13px;font-weight: bold;&quot;&gt;In format:&lt;/span&gt;&lt;span style=&quot;font-size:13px;&quot;&gt;&#xa;&quot;!&quot; + bridge_address + motor_address + command + position&#xa;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:13px;font-weight: bold;&quot;&gt;Where:&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:13px;&quot;&gt;- bridge address - string - can be blank&#xa;- motor address - string&lt;/span&gt;&lt;span style=&quot;font-size:13px;font-weight: bold;&quot;&gt;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:13px;&quot;&gt;- command is: either &#39;o&#39;, &#39;s&#39;, &#39;c&#39; or &#39;m&#39;&#xa;- position is only shown if command is &#39;m&#39;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=8209395prcts;" vertex="1" parent="1">
+          <mxGeometry x="945" y="4650" width="270" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-55" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=1.006;exitY=0.5;exitPerimeter=0;entryX=-0.006;entryY=0.5;entryPerimeter=0;lucidId=B509bKymW~Lh;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-53" target="_eBOtiYvHq5mVtx5obwK-42">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-56" value="&lt;ol style=&quot;margin: 0px; padding-left: 10px;list-style-position: inside; list-style-type:decimal&quot;&gt;&lt;li style=&quot;text-align:left;&quot;&gt;&lt;span style=&quot;margin-left: 0px;margin-top: -2px;&quot;&gt;&lt;span style=&quot;font-size:13px;&quot;&gt;Is there a match for the bridge address and motor address?&lt;/span&gt;&lt;/span&gt;&lt;/li&gt;&lt;/ol&gt;&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:13px;&quot;&gt;2. is the command either &#39;o&#39;, &#39;s&#39;, &#39;c&#39; or &#39;m&#39;?&#xa;&#xa;if 1 or 2 above is no, ignore the TCP command&#xa; &lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=G509_mgeSkII;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="4650" width="270" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-57" value="&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:25.7px;font-weight: bold;&quot;&gt;message:&lt;/span&gt;&lt;span style=&quot;font-size:12.3px;&quot;&gt;&lt;span style=&quot;font-size:12.3px;&quot;&gt; &#xa;{position} (integer)&#xa;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:12.3px;font-weight: bold;&quot;&gt;Example:&lt;/span&gt;&#xa;45&lt;/span&gt;&lt;span style=&quot;font-size:9px;&quot;&gt;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:9px;&quot;&gt;&lt;span style=&quot;font-size:9px;&quot;&gt;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:9px;font-weight: bold;&quot;&gt;USE:&#xa;&lt;/span&gt;&#39;qos&#39; &amp; &#39;retain&#39; properties from config -&amp;gt; mqtt&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=YJvMxeq2laYP;" vertex="1" parent="1">
+          <mxGeometry x="2228" y="4740" width="225" height="225" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-58" value="Strip out the &#39;;&#39; character if exists." style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=fe19gC_5~URO;" vertex="1" parent="1">
+          <mxGeometry x="668" y="4543" width="177" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-59" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=1.006;exitY=0.5;exitPerimeter=0;entryX=-0.006;entryY=0.475;entryPerimeter=0;lucidId=Re19kVv~JuvK;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-42" target="_eBOtiYvHq5mVtx5obwK-43">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-60" value="see Sync vs Async below" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=18.3;fontColor=#9391ff;fontStyle=1;align=left;spacing=3.8;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=yq19T3tb4oBs;" vertex="1" parent="1">
+          <mxGeometry x="534" y="2611" width="245" height="71" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-61" value="see Sync vs Async below" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=18.3;fontColor=#9391ff;fontStyle=1;align=left;spacing=3.8;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=Vq19lC-3-1U4;" vertex="1" parent="1">
+          <mxGeometry x="525" y="3555" width="245" height="71" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-62" value="If hub_communication.async=true then don&#39;t queue up TCP commands. You can send them all concurrently.&#xa;&#xa;If hub_communication.async=false then queue up TCP commands. Send next command when either:&#xa;- a TCP response has been received or;&#xa;- {tcp.timeout} seconds have passed" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillOpacity=100;fillColor=#9391ff;strokeWidth=0;lucidId=-OvMXEtYcyjx;" vertex="1" parent="1">
+          <mxGeometry x="127" y="5141" width="319" height="319" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-63" value="Overview" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=60;fontColor=#333333;spacing=3.8;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=TPt-U_d_Wz-0;" vertex="1" parent="1">
+          <mxGeometry x="45" y="45" width="413" height="128" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-64" value="Home Assistant (home automation system)" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=HQt-FCAx04TY;" vertex="1" parent="1">
+          <mxGeometry x="127" y="225" width="188" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-65" value="This app" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=~Qt-u1lkzVN0;" vertex="1" parent="1">
+          <mxGeometry x="480" y="225" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-66" value="Blinds/Curtains" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=iRt-Ta374flP;" vertex="1" parent="1">
+          <mxGeometry x="761" y="225" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-67" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=block;startFill=1;endArrow=block;endFill=1;exitX=-0.009;exitY=0.5;exitPerimeter=0;entryX=1.009;entryY=0.5;entryPerimeter=0;lucidId=ARt-6wv2B1lO;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-66" target="_eBOtiYvHq5mVtx5obwK-65">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-68" value="TCP" style="text;html=1;resizable=0;labelBackgroundColor=default;align=center;verticalAlign=middle;fontStyle=1;fontColor=#333333;fontSize=13.3;" vertex="1" parent="_eBOtiYvHq5mVtx5obwK-67">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-69" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=block;startFill=1;endArrow=block;endFill=1;exitX=-0.009;exitY=0.5;exitPerimeter=0;entryX=1.006;entryY=0.5;entryPerimeter=0;lucidId=GUt-eOaBNT4N;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-65" target="_eBOtiYvHq5mVtx5obwK-64">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-70" value="MQTT" style="text;html=1;resizable=0;labelBackgroundColor=default;align=center;verticalAlign=middle;fontStyle=1;fontColor=#333333;fontSize=13.3;" vertex="1" parent="_eBOtiYvHq5mVtx5obwK-69">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-71" value="Example flow of opening a blind/curtain" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeOpacity=0;fillOpacity=0;rounded=1;absoluteArcSize=1;arcSize=9;fillColor=#ffffff;strokeWidth=2.3;lucidId=_Vt-cw-dZMUe;" vertex="1" parent="1">
+          <mxGeometry x="110" y="374" width="330" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-72" value="Home Assistant (home automation system)" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=VWt-jlEf4o0E;" vertex="1" parent="1">
+          <mxGeometry x="131" y="465" width="188" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-73" value="This app" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=YWt-j2kybEB5;" vertex="1" parent="1">
+          <mxGeometry x="587" y="465" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-74" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=1.006;exitY=0.258;exitPerimeter=0;entryX=-0.009;entryY=0.258;entryPerimeter=0;lucidId=2Wt-CKX5c4AC;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-72" target="_eBOtiYvHq5mVtx5obwK-73">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-75" value="MQTT - Open blind command" style="text;html=1;resizable=0;labelBackgroundColor=default;align=center;verticalAlign=middle;fontStyle=1;fontColor=#333333;fontSize=13.3;" vertex="1" parent="_eBOtiYvHq5mVtx5obwK-74">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-76" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=1.009;exitY=0.241;exitPerimeter=0;entryX=-0.009;entryY=0.242;entryPerimeter=0;lucidId=eXt-tR_3l~l6;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-73" target="_eBOtiYvHq5mVtx5obwK-78">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-77" value="TCP - Open blind command" style="text;html=1;resizable=0;labelBackgroundColor=default;align=center;verticalAlign=middle;fontStyle=1;fontColor=#333333;fontSize=13.3;" vertex="1" parent="_eBOtiYvHq5mVtx5obwK-76">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-78" value="Blinds/Curtains" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;fontSize=16.7;fontColor=#333333;spacing=3.8;strokeColor=#5e5e5e;strokeOpacity=100;rounded=1;absoluteArcSize=1;arcSize=9;strokeWidth=2.3;lucidId=pXt-ZG3bNaiz;" vertex="1" parent="1">
+          <mxGeometry x="990" y="465" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-79" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=-0.009;exitY=0.767;exitPerimeter=0;entryX=1.009;entryY=0.767;entryPerimeter=0;lucidId=FXt-gMHSA6Q3;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-78" target="_eBOtiYvHq5mVtx5obwK-73">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-80" value="TCP - Blind opened ok" style="text;html=1;resizable=0;labelBackgroundColor=default;align=center;verticalAlign=middle;fontStyle=1;fontColor=#333333;fontSize=13.3;" vertex="1" parent="_eBOtiYvHq5mVtx5obwK-79">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-81" value="" style="html=1;jettySize=18;whiteSpace=wrap;fontSize=13;strokeColor=#5E5E5E;strokeWidth=1.5;rounded=1;arcSize=12;edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;exitX=-0.009;exitY=0.792;exitPerimeter=0;entryX=1.006;entryY=0.792;entryPerimeter=0;lucidId=WXt-Gz3n-m6q;" edge="1" parent="1" source="_eBOtiYvHq5mVtx5obwK-73" target="_eBOtiYvHq5mVtx5obwK-72">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-82" value="MQTT - Blind opened ok" style="text;html=1;resizable=0;labelBackgroundColor=default;align=center;verticalAlign=middle;fontStyle=1;fontColor=#333333;fontSize=13.3;" vertex="1" parent="_eBOtiYvHq5mVtx5obwK-81">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-83" value="This can be simulated using MQTT Explorer" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillOpacity=100;fillColor=#b8f5ed;strokeWidth=0;lucidId=Z5t-.qA-ovrc;" vertex="1" parent="1">
+          <mxGeometry x="143" y="600" width="158" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_eBOtiYvHq5mVtx5obwK-84" value="This can be simulated using Socket Devugger" style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillOpacity=100;fillColor=#b8f5ed;strokeWidth=0;lucidId=-5t-LYFXPz7Q;" vertex="1" parent="1">
+          <mxGeometry x="971" y="600" width="158" height="60" as="geometry" />
+        </mxCell>
+        <UserObject label="&lt;div style=&quot;display: flex; justify-content: center; text-align: center; align-items: baseline; font-size: 0; line-height: 1.25;margin-top: -2px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;font-size:25.7px;font-weight: bold;&quot;&gt;message:&lt;/span&gt;&lt;span style=&quot;font-size:12.3px;&quot;&gt; &#xa;&lt;/span&gt;&lt;span style=&quot;font-size:9px;&quot;&gt;{&#xa;  &quot;name&quot;: &quot;Bed 1 Roller Blind&quot;,&#xa;  &quot;unique_id&quot;: &quot;bed_1_roller_blind&quot;,&#xa;  &quot;command_topic&quot;: &quot;mqtt-blinds/bed_1_roller_blind/set&quot;,&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:8.5px;&quot;&gt;&quot;position_topic&quot;: &lt;/span&gt;&lt;span style=&quot;font-size:9px;&quot;&gt;&quot;mqtt-blinds/bed_1_roller_blind/position&quot;,&lt;/span&gt;&lt;span style=&quot;font-size:8.5px;&quot;&gt;&#xa;&quot;set_position_topic&quot;: &lt;/span&gt;&lt;span style=&quot;font-size:9px;&quot;&gt;&quot;mqtt-blinds/bed_1_roller_blind/position/set&quot;,&#xa;  &quot;schema&quot;: &quot;json&quot;,&#xa;  &quot;availability_topic&quot;: &quot;mqtt-blinds/available&quot;,&#xa;  &quot;device_class&quot;: &quot;blind&quot;,&#xa;&quot;&lt;/span&gt;&lt;span style=&quot;font-size:8.5px;&quot;&gt;position_template&quot;: &quot;% value %&quot;,&#xa;  &quot;payload_open&quot;: &quot;open&quot;,&#xa;  &quot;payload_close&quot;: &quot;close&quot;,&#xa;  &quot;position_open&quot;: 0,&#xa;  &quot;position_closed&quot;: 100,&#xa;  &quot;payload_stop&quot;: null&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:9px;&quot;&gt;}&#xa;&#xa;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:12.3px;font-weight: bold;&quot;&gt;Where:&lt;/span&gt;&lt;span style=&quot;font-size:9px;&quot;&gt; &#xa;- Name is the name from configuration.yml&#xa;-unique_id = name from configuration.yml converted to lowercase &amp; snake_case&#xa;- command_topic= &amp;lt;mqtt.topic_prefix&amp;gt;/{unique_id}/set&#xa;- position_topic =  &amp;lt;mqtt.topic_prefix&amp;gt;/{unique_id}/position&#xa;- set_position_topic = &amp;lt;mqtt.topic_prefix&amp;gt;/{unique_id}/position/set &#xa;- availability_topic = from mqtt.availability_topic in config&#xa;- device_class: if blinds.type=&#39;blind&#39; use &#39;blind&#39;, if blinds.type=&#39;curtain&#39; use &#39;awning&#39;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:8.5px;&quot;&gt; &quot;payload_stop&quot;: &lt;/span&gt;&lt;span style=&quot;font-size:9px;&quot;&gt;if blinds.type=&#39;blind&#39; use null, if blinds.type=&#39;curtain&#39; use &quot;stop&quot;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:8.5px;&quot;&gt;&lt;span style=&quot;font-size:8.5px;&quot;&gt; &lt;/span&gt;&lt;span style=&quot;font-size:8.5px;color:#e81313;&quot;&gt; &quot;payload_open&quot;: if reverse_direction=false-&amp;gt; &quot;open&quot; else &quot;close&quot;,&#xa;  &quot;payload_close&quot;: if reverse_direction=false-&amp;gt; &quot;close&quot; else &quot;open&quot;,&#xa;  &quot;position_open&quot;: if reverse_direction=false-&amp;gt; 0 else 100,&#xa;  &quot;position_closed&quot;: if reverse_direction=false-&amp;gt; 100 else 0,&lt;/span&gt;&lt;span style=&quot;font-size:9px;&quot;&gt;&lt;span style=&quot;font-size:9px;&quot;&gt;&#xa;&#xa;&lt;/span&gt;&lt;span style=&quot;font-size:9px;font-weight: bold;&quot;&gt;USE:&#xa;&lt;/span&gt;&#39;qos&#39; &amp; &#39;retain&#39; properties from config -&amp;gt; mqtt&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" placeholders="1" id="_eBOtiYvHq5mVtx5obwK-85">
+          <mxCell style="html=1;overflow=block;blockSpacing=1;whiteSpace=wrap;shadow=1;fontSize=13;spacing=3.8;strokeColor=none;fillColor=#FFECA9;strokeWidth=0;lucidId=~wng_KCOe3uH;" vertex="1" parent="1">
+            <mxGeometry x="908" y="1950" width="405" height="405" as="geometry" />
+          </mxCell>
+        </UserObject>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
