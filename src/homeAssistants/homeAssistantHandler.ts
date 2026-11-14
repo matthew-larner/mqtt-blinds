@@ -1,87 +1,32 @@
-import { setCommandTopic } from "./process";
 import { Handler } from "../contracts";
-import Queue from "../lib/queue";
-import {
-  getRollerByName,
-  queuer,
-  preparePayload,
-  stall,
-} from "../utilities/utils";
-import { CommandOnQueue, SubscriptionList } from "../lib/Global";
+import { setCommandTopic } from "./process";
+import CommandQueue from "../lib/commandQueue";
+import { toSnakeCase } from "../utilities/utils";
 
-const topicQueue = new Queue();
-
-export const homeAssistantCommandsHandler =
-  async ({
-    blindRollerClient,
-    mqttConfig,
-    hubs,
-    mqttClient,
-    udpClient,
-    hub_communication,
-  }: Handler) =>
-  async (topic: string, message: Buffer) => {
-    const res = await preparePayload(topic, message, hubs);
-
-    const { payload, operation, blindsName, protocol } = res;
-    const { async: isAsync, timeout: _timeout } = hub_communication;
-    const timeout = _timeout * 1000;
-
-    const _topic = `${mqttConfig.topic_prefix}/${blindsName}/position`;
-
-    let allTopic = [];
-    let next = false;
-
-    // waiting time for queuing is the timeout time
-
-    if (SubscriptionList.indexOf(topic) !== -1) {
-      await topicQueue.topicOnQueue({
-        payload,
-        operation,
-        blindsName,
-        protocol,
-      });
-    }
-
-    allTopic = await topicQueue.getTopicsQueue();
-
-    await topicQueue.clearQueue();
-
-    const runProcess = async (topic: any) => {
-      const { payload, operation, blindsName, protocol } = topic;
-      if (!blindsName) {
-        return;
-      }
-
-      const { hub, blind } = getRollerByName(hubs, blindsName);
-
-      try {
-        return await setCommandTopic(
-          hub,
-          blind,
-          blindRollerClient,
-          topic,
-          payload,
-          mqttClient,
-          protocol,
-          udpClient,
-          isAsync,
-          _timeout,
-          operation
-        );
-      } catch (error) {
-        console.error("Home assistant commandHandler error:", error);
-      }
-    };
-
-    if (allTopic.length > 0) {
-      for (let i = 0; i < allTopic.length; i++) {
-        await runProcess({
-          payload,
-          operation,
-          blindsName,
-          protocol,
-        });
-      }
+export const homeAssistantCommandsHandler = async (config: Handler) => {
+  const queues = new Map<string, CommandQueue>();
+  return async (topic: string, message: Buffer) => {
+    // Ignore state and availability messages, including our own publications.
+    const prefix = `${config.mqttConfig.topic_prefix}/`;
+    if (!topic.startsWith(prefix)) return;
+    const parts = topic.slice(prefix.length).split("/");
+    const operation = parts.length === 2 && parts[1] === "set"
+      ? "commandTopic"
+      : parts.length === 3 && parts[1] === "position" && parts[2] === "set"
+        ? "setPositionTopic" : null;
+    if (!operation) return;
+    const hub = config.hubs.find(h =>
+      h.blinds.some(b => toSnakeCase(b.name) === parts[0]));
+    if (!hub) return;
+    const blind = hub.blinds.find(b => toSnakeCase(b.name) === parts[0]);
+    const key = `${hub.protocol}:${hub.host}:${hub.port}`;
+    if (!queues.has(key)) queues.set(key, new CommandQueue());
+    try {
+      await setCommandTopic(hub, blind, config.blindRollerClient,
+        message.toString().trim(), hub.protocol, config.udpClient,
+        config.hub_communication.timeout, operation, queues.get(key));
+    } catch (error) {
+      console.error(`Blind command failed for ${blind.name}: ${error.message}`);
     }
   };
+};

@@ -1,12 +1,12 @@
 import * as rollerBlindHandler from "./entities/rollerBlindsHandler";
 import rollerBlind from "./entities/rollerBlinds";
 import * as udpRollerBlindHandler from "./entities/udpRollerBlindsHandler";
-import { BlindRollerClient, IHub } from "./contracts";
+import { BlindRollerClient, IHub, UdpClient } from "./contracts";
 import udp from "./entities/udp";
 import { startup } from "./homeAssistants/startup";
 import mqtt from "./entities/mqtt";
 import { homeAssistantCommandsHandler } from "./homeAssistants/homeAssistantHandler";
-import { FileParser } from "./utilities/utils";
+import { FileParser, hubAvailabilityTopic } from "./utilities/utils";
 
 export async function main() {
   try {
@@ -21,42 +21,49 @@ export async function main() {
       throw new Error("MQTT Discovery is set to false: cannot go any further");
     }
 
-    const mqttClient = await mqtt(mqttConfig, startup({ mqttConfig, hubs }));
+    mqttConfig.availability_topic = mqttConfig.availability_topic || "mqtt-blind/available";
+    const mqttClient = await mqtt(mqttConfig, startup({ mqttConfig, hubs }),
+      hubs.filter(hub => hub.protocol.toLowerCase() === "tcp")
+        .map(hub => hubAvailabilityTopic(mqttConfig, hub)));
 
-    const blindRollerClient: BlindRollerClient[] = [];
-    const udpClient: [] = [];
+    const blindRollerClient: { [key: string]: BlindRollerClient } = {};
+    const udpClient: { [key: string]: UdpClient } = {};
 
     // connect to all hub ip ports
-    hubs.forEach(async (hub: IHub, i) => {
+    for (const hub of hubs as IHub[]) {
+      const key = `${hub.host}:${hub.port}`;
       if (hub.protocol.toLowerCase() === "udp") {
-        udpClient[hub.bridge_address] = await udp(hub.host, hub.port);
+        udpClient[key] = await udp(hub.host, hub.port);
 
         // listen for UDP Client
-        udpClient[hub.bridge_address].onMessage(
-          udpRollerBlindHandler.udpRollerBlindsCommandsHandler({
+        udpClient[key].onMessage(
+          await udpRollerBlindHandler.udpRollerBlindsCommandsHandler({
             mqttClient,
             mqttConfig,
-            hubs,
+            hubs: [hub],
           })
         );
       } else if (hub.protocol.toLowerCase() === "tcp") {
-        blindRollerClient[hub.bridge_address] = await rollerBlind(
+        blindRollerClient[key] = await rollerBlind(
           hub.host,
           hub.port
         );
 
+        blindRollerClient[key].onStatus(online =>
+          mqttClient.setHubAvailability(hubAvailabilityTopic(mqttConfig, hub), online));
+
         // listen TCP Client
-        await blindRollerClient[hub.bridge_address].onMessage(
+        await blindRollerClient[key].onMessage(
           await rollerBlindHandler.rollerBlindsCommandsHandler({
             mqttClient,
             mqttConfig,
-            hubs,
+            hubs: [hub],
           })
         );
       } else {
         console.error(`${hub.protocol} Protocol not recognize!.`);
       }
-    });
+    }
 
     mqttClient.onMessage(
       await homeAssistantCommandsHandler({

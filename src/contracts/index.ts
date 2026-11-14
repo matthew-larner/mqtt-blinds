@@ -57,12 +57,13 @@ export interface MqttClient {
 
 export interface BlindRollerClient {
   onMessage: (callback: (data: Buffer) => void) => void;
-  write: (data: any, cb?: (error?: Error) => void) => void;
+  write: (data: string, timeoutMs?: number) => Promise<void>;
+  onStatus: (callback: (online: boolean) => void) => void;
 }
 
 export interface UdpClient {
   onMessage: (callback: (data: Buffer) => void) => void;
-  send: (data: any, cb?: (error?: Error) => void) => void;
+  send: (data: string) => Promise<void>;
 }
 
 export interface IHubCommunication {
@@ -71,11 +72,11 @@ export interface IHubCommunication {
 }
 
 export interface Handler {
-  blindRollerClient: BlindRollerClient[];
+  blindRollerClient: { [key: string]: BlindRollerClient };
   mqttConfig: any;
   hubs: any;
   mqttClient: MqttClient;
-  udpClient: UdpClient[];
+  udpClient: { [key: string]: UdpClient };
   hub_communication: IHubCommunication;
 }
 

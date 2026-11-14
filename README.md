@@ -84,8 +84,8 @@ hubs:
 
 **Where:**
 
-- `tcp.async`: if `true`, all TCP commands will be run at the same time. If `false`, commands will be queued up and ran in sequence.
-- `tcp.timeout`: how long (seconds) to wait before a TCP command times out without getting a response from the hub.
+- `hub_communication.async`: retained for compatibility. Commands are now always processed in order per hub. Different hubs can process commands independently.
+- `hub_communication.timeout`: seconds allowed for each connection/write/acknowledgement attempt. Defaults to 10 when missing or invalid.
 - `hub.host/port` is the host/port of your blind hub
 - `hub.type` is the brand of the blind hub. `acmeda` and `dooya` are supported.
 - `hub.protocol` is the protocol to use when communication with the hub. Either `tcp` or `udp`.
@@ -94,3 +94,28 @@ hubs:
 - `blinds.type` is either: `blind` (a motorised roller blind), `curtain` (a motorised curtain or awning)
 - `blinds.motor_address`: The address of the motor. You can get this by polling your motorised blind hub/API
 - `blinds.reverse_direction`: If `true`, reverse the direction of up/open and down/closed.
+
+
+## Command reliability
+
+TCP commands wait for a connected controller and a matching command acknowledgement.
+A failed command is retried up to three times. Commands expire 60 seconds after
+being queued, including time spent waiting behind earlier commands, so an old
+command is not executed much later. Failures are logged with the blind name.
+Retries can repeat a command if its acknowledgement was lost.
+
+The bridge accepts controller command echoes, including signal metadata such as
+`!NOCo,R7D;`, or a matching final position report. An acknowledgement confirms
+receipt only. Home Assistant positions update from `r` position reports, not
+from the requested target or a stop acknowledgement. TCP replies are buffered
+and split at message boundaries.
+
+TCP cover availability requires both the MQTT bridge and that cover's controller
+to be connected. UDP has no persistent connection, so its availability still
+tracks the MQTT bridge; a successful UDP send does not confirm device receipt.
+
+## Development checks
+
+Run `npm ci`, then `npm test` to compile and run the regression tests. These tests
+use simulated connections and do not contact Home Assistant or any blinds.
+Container builds also run these tests before producing an image.

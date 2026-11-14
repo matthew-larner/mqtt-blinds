@@ -11,7 +11,8 @@
     "start": "if-env NODE_ENV=local && npm run start:dev || npm run start:prod",
     "start:prod": "node ./dist/index.js",
     "start:dev": "tsc-watch --onSuccess \"npm run start:prod\" ",
-    "build": "./node_modules/typescript/bin/tsc -p ./tsconfig.json"
+    "build": "./node_modules/typescript/bin/tsc -p ./tsconfig.json",
+    "test": "npm run build && node tests/regression.js"
   },
   "dependencies": {
     "@types/node": "^13.9.1",

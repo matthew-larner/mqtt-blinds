@@ -1,60 +1,41 @@
 import * as mqtt from "mqtt";
 import * as logger from "../lib/logger/logger";
 
-var availabilityTopic: string;
 const connect = async (
   config: any,
-  onConnected: (client: mqtt.MqttClient) => void
+  onConnected: (client: mqtt.MqttClient) => void | Promise<void>,
+  initialHubTopics: string[] = []
 ) => {
-  if (!config.availability_topic) {
-    availabilityTopic = "mqtt-blind/available";
-    console.warn("availability_topic is empty");
-  } else {
-    availabilityTopic = config.availability_topic;
-  }
-  const client = mqtt.connect(
-    `mqtt://${config.username}:${config.password}@${config.broker}:${config.port}`,
-    {
-      will: {
-        topic: availabilityTopic,
-        payload: "offline",
-        qos: 1,
-        retain: true,
-      },
-    }
-  );
-
-  client.on("error", (err) => {
-    logger.error(`Mqtt error: ${err.message}`);
+  const availabilityTopic = config.availability_topic;
+  const hubStates = new Map(initialHubTopics.map(topic => [topic, false] as [string, boolean]));
+  const client = mqtt.connect(`mqtt://${config.broker}:${config.port}`, {
+    username: config.username,
+    password: config.password,
+    will: { topic: availabilityTopic, payload: "offline", qos: 1, retain: true },
   });
-
-  client.on("connect", () => {
-    logger.info("Connected to mqtt");
-    onPublish(availabilityTopic, "online");
-    onConnected(client);
-  });
-
-  client.on("close", () => {
-    logger.info("Mqtt connection closed");
-    onPublish(availabilityTopic, "offline");
-  });
-
-  const onMessage = (callback: mqtt.OnMessageCallback) => {
-    client.on("message", callback);
-  };
-
-  const onPublish = (topic: string, payload: string) => {
-    logger.info(`Sending payload: ${payload} to topic: ${topic}`);
-    client.publish(topic, payload, {
-      qos: config.qos,
-      retain: config.retain,
+  const publishAvailability = (topic: string, online: boolean) => {
+    if (client.connected) client.publish(topic, online ? "online" : "offline", {
+      qos: 1, retain: true,
     });
   };
-
+  client.on("error", error => logger.error(`MQTT error: ${error.message}`));
+  client.on("connect", () => {
+    publishAvailability(availabilityTopic, true);
+    hubStates.forEach((online, topic) => publishAvailability(topic, online));
+    Promise.resolve(onConnected(client)).catch(error => {
+      logger.error(`MQTT setup failed: ${error.message}`);
+    });
+  });
+  client.on("close", () => logger.info("MQTT connection closed"));
   return {
-    onMessage,
-    onPublish,
+    onMessage: (callback: mqtt.OnMessageCallback) => { client.on("message", callback); },
+    onPublish: (topic: string, payload: string) => {
+      client.publish(topic, payload, { qos: config.qos, retain: config.retain });
+    },
+    setHubAvailability: (topic: string, online: boolean) => {
+      hubStates.set(topic, online);
+      publishAvailability(topic, online);
+    },
   };
 };
-
 export default connect;

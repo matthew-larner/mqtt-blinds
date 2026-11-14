@@ -16,6 +16,6 @@ RUN npm install
 COPY . .
 
 RUN rm -rf dist/ \
-    && npm run build
+    && npm test
 
 CMD [ "npm", "start" ]

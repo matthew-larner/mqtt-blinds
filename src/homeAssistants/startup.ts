@@ -1,6 +1,5 @@
-import { SubscriptionList } from "../lib/Global";
 import * as logger from "../lib/logger/logger";
-import { toSnakeCase } from "../utilities/utils";
+import { hubAvailabilityTopic, toSnakeCase } from "../utilities/utils";
 
 export const startup =
   ({ mqttConfig, hubs }) =>
@@ -27,7 +26,12 @@ export const startup =
                 position_topic: `${mqttConfig.topic_prefix}/${blindName}/position`,
                 set_position_topic: `${mqttConfig.topic_prefix}/${blindName}/position/set`,
                 schema: "json",
-                availability_topic: `${mqttConfig.availability_topic}`,
+                availability: [
+                  { topic: mqttConfig.availability_topic },
+                  ...(hubs[h].protocol.toLowerCase() === "tcp"
+                    ? [{ topic: hubAvailabilityTopic(mqttConfig, hubs[h]) }] : []),
+                ],
+                availability_mode: "all",
                 device_class: type == "blind" ? type : "awning",
                 position_template: "{{value}}",
                 payload_open: reverse_direction ? "close" : "open",
@@ -39,7 +43,7 @@ export const startup =
             } else {
               // skip other types
               logger.info(`Home Assistant Discovery skipping type: ${type}`);
-              return;
+              continue;
             }
 
             if (publish_topic) {
@@ -73,8 +77,6 @@ export const startup =
           let position_topic = `${mqttConfig.topic_prefix}/${blindName}/position`;
           let set_position_topic = `${mqttConfig.topic_prefix}/${blindName}/position/set`;
           let availability_topic = `${mqttConfig.availability_topic}`;
-          SubscriptionList.push(command_topic);
-          SubscriptionList.push(set_position_topic);
           const topics = [
             command_topic,
             position_topic,

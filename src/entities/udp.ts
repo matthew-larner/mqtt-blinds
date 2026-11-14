@@ -1,40 +1,15 @@
-import * as logger from "../lib/logger/logger";
 import * as dgram from "dgram";
 
 const connect = async (host: string, port: number) => {
-  var client = dgram.createSocket("udp4");
-
-  // Since UDP Don't have state. it's better to initiate connection this way.
-  var data = Buffer.from("Client connected ...");
-  client.send(data, port, host, function (error) {
-    if (error) {
-      client.close();
-    } else {
-      console.info("ClientConnected.");
-    }
+  const client = dgram.createSocket("udp4");
+  client.on("error", error => console.error(`UDP controller error: ${error.message}`));
+  const send = (command: string): Promise<void> => new Promise((resolve, reject) => {
+    const buffer = Buffer.from(command, "utf8");
+    client.send(buffer, port, host, error => error ? reject(error) : resolve());
   });
-
-  client.on("error", (err) => {
-    console.error(`server error:\n${err.stack}`);
-    client.close();
-  });
-
-  client.on("timeout", () => {
-    logger.info(`No UDP communication detected!`);
-  });
-  const send = (topic: string, payload: any) => {
-    const buff = Buffer.from(topic, "utf-8");
-    client.send(buff, payload, buff.length, port, host, function (err, bytes) {
-      if (err) throw err;
-      console.info(`UDP client message sent to -> ${topic} : ${port}`);
-    });
+  return {
+    send,
+    onMessage: (callback: (data: Buffer) => void) => { client.on("message", callback); },
   };
-
-  const onMessage = (callback: (data: Buffer) => void) => {
-    client.on("message", callback);
-  };
-
-  return { onMessage, send };
 };
-
 export default connect;
